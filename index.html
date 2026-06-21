@@ -381,11 +381,11 @@ theory:[
 {title:'Приведение типов',body:`<p style="margin-bottom:10px">Чтобы работать с числами, нужно преобразовать строку в нужный тип.</p>`,code:`<span class="kw">int</span>(<span class="st">"42"</span>)      <span class="cm"># → 42</span>\n<span class="kw">float</span>(<span class="st">"3.14"</span>)  <span class="cm"># → 3.14</span>\n<span class="kw">str</span>(<span class="nu">100</span>)      <span class="cm"># → "100"</span>\n<span class="kw">bool</span>(<span class="nu">0</span>)       <span class="cm"># → False</span>\n<span class="kw">bool</span>(<span class="nu">1</span>)       <span class="cm"># → True</span>`,output:`42\n3.14\n100\nFalse\nTrue`}
 ],
 quiz:[
-{q:'Что выведет: print("a", "b", sep="-")?',opts:['a b','a-b','a,b',"'a-b'"],ans:1,explain:'sep="-" ставит дефис между аргументами вместо пробела по умолчанию'},
+{q:'Что выведет?',code:'print("a", "b", sep="-")',opts:['a b','a-b','a,b',"'a-b'"],ans:1,explain:'sep="-" ставит дефис между аргументами вместо пробела по умолчанию'},
 {q:'Какой тип возвращает input()?',opts:['int','float','str','любой'],ans:2,explain:'input() всегда возвращает строку (str), даже если пользователь ввёл число'},
-{q:'Что выведет: print("x", end="!")?',opts:['x\\n','x!','"x!"','x'],ans:1,explain:'end="!" заменяет символ переноса строки — после x будет напечатан !'},
+{q:'Что выведет?',code:'print("x", end="!")',opts:['x\\n','x!','"x!"','x'],ans:1,explain:'end="!" заменяет символ переноса строки — после x будет напечатан !'},
 {q:'Как правильно считать число с клавиатуры?',opts:['input(int())','int(input())','number(input())','readInt()'],ans:1,explain:'сначала input() читает строку, затем int() переводит её в число'},
-{q:'Что выведет: print(1, 2, 3, sep="*")?',opts:['1 2 3','123','1*2*3','1,2,3'],ans:2,explain:'sep="*" ставит * между каждым аргументом: 1*2*3'}
+{q:'Что выведет?',code:'print(1, 2, 3, sep="*")',opts:['1 2 3','123','1*2*3','1,2,3'],ans:2,explain:'sep="*" ставит * между каждым аргументом: 1*2*3'}
 ],
 tasks:[
 {title:'Привет, Python!',desc:'Выведите на экран: <code style="color:#a78bfa">Привет, Python!</code>',starter:'',expected:'Привет, Python!',inputs:[]},
@@ -405,11 +405,11 @@ theory:[
 {title:'Арифметика',body:`<p style="margin-bottom:10px">Основные арифметические операции. Обратите внимание на <span class="bi">//</span> и <span class="bi">%</span>!</p>`,code:`<span class="fn">print</span>(<span class="nu">10</span> + <span class="nu">3</span>)   <span class="cm"># 13</span>\n<span class="fn">print</span>(<span class="nu">10</span> - <span class="nu">3</span>)   <span class="cm"># 7</span>\n<span class="fn">print</span>(<span class="nu">10</span> * <span class="nu">3</span>)   <span class="cm"># 30</span>\n<span class="fn">print</span>(<span class="nu">10</span> / <span class="nu">3</span>)   <span class="cm"># 3.333...</span>\n<span class="fn">print</span>(<span class="nu">10</span> // <span class="nu">3</span>)  <span class="cm"># 3 (целое)</span>\n<span class="fn">print</span>(<span class="nu">10</span> % <span class="nu">3</span>)   <span class="cm"># 1 (остаток)</span>\n<span class="fn">print</span>(<span class="nu">2</span> ** <span class="nu">8</span>)   <span class="cm"># 256 (степень)</span>`,output:`13\n7\n30\n3.3333333333333335\n3\n1\n256`}
 ],
 quiz:[
-{q:'Что вернёт type(42)?',opts:['str','float','int','bool'],ans:2,explain:'42 — целое число без дробной части, его тип int'},
-{q:'Чему равно 10 // 3?',opts:['3.33','3','4','1'],ans:1,explain:'// — целочисленное деление: 10 ÷ 3 = 3 (остаток отбрасывается)'},
-{q:'Чему равно 2 ** 8?',opts:['16','64','256','512'],ans:2,explain:'** — степень: 2⁸ = 2×2×2×2×2×2×2×2 = 256'},
-{q:'Чему равно 10 % 3?',opts:['3','0','1','3.3'],ans:2,explain:'% — остаток от деления: 10 = 3×3 + 1, остаток равен 1'},
-{q:`Что выведет f"{'ab'*3}"?`,opts:['ab3','ababab','ab ab ab','ababababab'],ans:1,explain:"'ab'*3 повторяет строку три раза: 'ab'+'ab'+'ab' = 'ababab'"}
+{q:'Что выведет?',code:'print(type(42))',opts:['str','float','int','bool'],ans:2,explain:'42 — целое число без дробной части, его тип int'},
+{q:'Что выведет?',code:'print(10 // 3)',opts:['3.33','3','4','1'],ans:1,explain:'// — целочисленное деление: 10 ÷ 3 = 3 (остаток отбрасывается)'},
+{q:'Что выведет?',code:'print(2 ** 8)',opts:['16','64','256','512'],ans:2,explain:'** — степень: 2⁸ = 2×2×2×2×2×2×2×2 = 256'},
+{q:'Что выведет?',code:'print(10 % 3)',opts:['3','0','1','3.3'],ans:2,explain:'% — остаток от деления: 10 = 3×3 + 1, остаток равен 1'},
+{q:'Что выведет?',code:"print(f\"{'ab'*3}\")",opts:['ab3','ababab','ab ab ab','ababababab'],ans:1,explain:"'ab'*3 повторяет строку три раза: 'ab'+'ab'+'ab' = 'ababab'"}
 ],
 tasks:[
 {title:'Знакомство',desc:'Используйте f-строку. Должно получиться: <code style="color:#a78bfa">Привет, Саша! Мне 15 лет.</code>',starter:'name = "Саша"\nage = 15\n',expected:'Привет, Саша! Мне 15 лет.',inputs:[]},
@@ -429,11 +429,11 @@ theory:[
 {title:'Логические операторы',body:`<p style="margin-bottom:10px"><span class="kw">and</span> — оба истинны, <span class="kw">or</span> — хотя бы одно, <span class="kw">not</span> — отрицание.</p>`,code:`<span class="fn">print</span>(<span class="kw">True</span> <span class="kw">and</span> <span class="kw">False</span>)  <span class="cm"># False</span>\n<span class="fn">print</span>(<span class="kw">True</span> <span class="kw">or</span> <span class="kw">False</span>)   <span class="cm"># True</span>\n<span class="fn">print</span>(<span class="kw">not</span> <span class="kw">True</span>)         <span class="cm"># False</span>\n<span class="fn">print</span>(<span class="nu">5</span> > <span class="nu">3</span> <span class="kw">and</span> <span class="nu">2</span> < <span class="nu">4</span>) <span class="cm"># True</span>`,output:`False\nTrue\nFalse\nTrue`}
 ],
 quiz:[
-{q:'Что выведет: 5>3 and 2<4?',opts:['True','False','Error','None'],ans:0,explain:'5>3 → True, 2<4 → True; оба истинны, и and даёт True'},
-{q:'Что выведет: not True?',opts:['True','False','None','1'],ans:1,explain:'not инвертирует значение: not True → False'},
-{q:'Что означает 10%2==0?',opts:['нечётное число','чётное число','ошибку','деление'],ans:1,explain:'остаток от деления на 2 равен 0 — значит, число делится на 2 нацело, то есть чётное'},
-{q:'Что не так: if x=5:',opts:['всё ок','= вместо ==','нет двоеточия','нет отступа'],ans:1,explain:'= — присвоение переменной, == — сравнение; в условии нужен =='},
-{q:'Что вернёт: "да" if 5>3 else "нет"?',opts:['нет','да','True','ошибка'],ans:1,explain:'5>3 — True, поэтому берётся первое значение "да"'}
+{q:'Что выведет?',code:'print(5 > 3 and 2 < 4)',opts:['True','False','Error','None'],ans:0,explain:'5>3 → True, 2<4 → True; оба истинны, и and даёт True'},
+{q:'Что выведет?',code:'print(not True)',opts:['True','False','None','1'],ans:1,explain:'not инвертирует значение: not True → False'},
+{q:'Что означает условие?',code:'10 % 2 == 0',opts:['нечётное число','чётное число','ошибку','деление'],ans:1,explain:'остаток от деления на 2 равен 0 — значит число делится на 2 нацело, то есть чётное'},
+{q:'Что не так в этом коде?',code:'if x = 5:',opts:['всё ок','= вместо ==','нет двоеточия','нет отступа'],ans:1,explain:'= — присвоение переменной, == — сравнение; в условии нужен =='},
+{q:'Что выведет?',code:'print("да" if 5 > 3 else "нет")',opts:['нет','да','True','ошибка'],ans:1,explain:'5>3 — True, поэтому берётся первое значение "да"'}
 ],
 tasks:[
 {title:'Знак числа',desc:'<code style="color:#a78bfa">x=7</code>. Выведите <code style="color:#a78bfa">положительное</code>, <code style="color:#a78bfa">отрицательное</code> или <code style="color:#a78bfa">ноль</code>',starter:'x = 7\n',expected:'положительное',inputs:[]},
@@ -453,11 +453,11 @@ theory:[
 {title:'break и continue',body:`<p style="margin-bottom:10px"><span class="kw">break</span> — полностью выходит из цикла. <span class="kw">continue</span> — пропускает текущую итерацию.</p>`,code:`<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">10</span>):\n    <span class="kw">if</span> i == <span class="nu">3</span>: <span class="kw">continue</span>  <span class="cm"># пропуск</span>\n    <span class="kw">if</span> i == <span class="nu">6</span>: <span class="kw">break</span>    <span class="cm"># стоп</span>\n    <span class="fn">print</span>(i, end=<span class="st">" "</span>)`,output:`0 1 2 4 5 `}
 ],
 quiz:[
-{q:'Что даёт range(5)?',opts:['1 2 3 4 5','0 1 2 3 4','0 1 2 3 4 5','1 2 3 4'],ans:1,explain:'range(n) даёт числа от 0 до n-1 включительно: 0,1,2,3,4'},
-{q:'Сколько итераций у range(1,10,2)?',opts:['4','5','9','10'],ans:1,explain:'range(1,10,2) → 1,3,5,7,9 — это ровно 5 чисел'},
+{q:'Что выведет?',code:'for i in range(5):\n    print(i, end=" ")',opts:['1 2 3 4 5','0 1 2 3 4','0 1 2 3 4 5','1 2 3 4'],ans:1,explain:'range(n) даёт числа от 0 до n-1 включительно: 0,1,2,3,4'},
+{q:'Сколько раз выполнится цикл?',code:'for i in range(1, 10, 2):\n    print(i)',opts:['4','5','9','10'],ans:1,explain:'range(1,10,2) → 1,3,5,7,9 — это ровно 5 чисел'},
 {q:'Что делает continue в цикле?',opts:['выходит из цикла','прерывает программу','пропускает итерацию','ничего'],ans:2,explain:'continue пропускает оставшийся код текущей итерации и переходит к следующей'},
-{q:'Что даёт range(5,0,-1)?',opts:['5 4 3 2 1','4 3 2 1 0','0 1 2 3 4','ошибку'],ans:0,explain:'шаг -1 и начало 5: считаем вниз 5,4,3,2,1 (до 0, не включая)'},
-{q:'Сколько раз выполнится: while True: break?',opts:['0 раз','1 раз','бесконечно','ошибка'],ans:1,explain:'break немедленно выходит из цикла — тело выполнится ровно один раз'}
+{q:'Что выведет?',code:'for i in range(5, 0, -1):\n    print(i, end=" ")',opts:['5 4 3 2 1','4 3 2 1 0','0 1 2 3 4','ошибку'],ans:0,explain:'шаг -1 и начало 5: считаем вниз 5,4,3,2,1 (до 0, не включая)'},
+{q:'Сколько раз выполнится цикл?',code:'while True:\n    break',opts:['0 раз','1 раз','бесконечно','ошибка'],ans:1,explain:'break немедленно выходит из цикла — тело выполнится ровно один раз'}
 ],
 tasks:[
 {title:'От 1 до 5',desc:'Выведите числа от 1 до 5, каждое на новой строке',starter:'',expected:'1\n2\n3\n4\n5',inputs:[]},
@@ -477,11 +477,11 @@ theory:[
 {title:'Перебор',body:`<p style="margin-bottom:10px"><span class="fn">enumerate</span>() даёт индекс и значение. List comprehension — краткий способ создать список.</p>`,code:`lst = [<span class="st">"а"</span>, <span class="st">"б"</span>, <span class="st">"в"</span>]\n<span class="kw">for</span> i, x <span class="kw">in</span> <span class="fn">enumerate</span>(lst):\n    <span class="fn">print</span>(i, x)\nsquares = [x**<span class="nu">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">5</span>)]\n<span class="fn">print</span>(squares)`,output:`0 а\n1 б\n2 в\n[0, 1, 4, 9, 16]`}
 ],
 quiz:[
-{q:'Что вернёт [1,2,3][-1]?',opts:['1','2','3','ошибка'],ans:2,explain:'отрицательный индекс считает с конца: -1 — это последний элемент (3)'},
-{q:'lst=[3,1,2]; lst.sort() → lst?',opts:['[3,1,2]','[1,2,3]','(1,2,3)','{1,2,3}'],ans:1,explain:'sort() сортирует список по возрастанию прямо на месте'},
-{q:'Что такое [1,2,3,4][1:3]?',opts:['[1,2]','[2,3]','[2,3,4]','[1,2,3]'],ans:1,explain:'срез [1:3] берёт элементы с индекса 1 включительно до 3 не включая: [2,3]'},
-{q:'len([0]*5) = ?',opts:['0','1','5','ошибка'],ans:2,explain:'[0]*5 создаёт список из пяти нулей [0,0,0,0,0], его длина 5'},
-{q:'[1,2,3][::-1] = ?',opts:['[3,2,1]','[1,2,3]','[2,3]','ошибка'],ans:0,explain:'срез [::-1] с шагом -1 разворачивает список задом наперёд'}
+{q:'Что выведет?',code:'lst = [1, 2, 3]\nprint(lst[-1])',opts:['1','2','3','ошибка'],ans:2,explain:'отрицательный индекс считает с конца: -1 — это последний элемент (3)'},
+{q:'Что выведет?',code:'lst = [3, 1, 2]\nlst.sort()\nprint(lst)',opts:['[3,1,2]','[1,2,3]','(1,2,3)','{1,2,3}'],ans:1,explain:'sort() сортирует список по возрастанию прямо на месте'},
+{q:'Что выведет?',code:'lst = [1, 2, 3, 4]\nprint(lst[1:3])',opts:['[1,2]','[2,3]','[2,3,4]','[1,2,3]'],ans:1,explain:'срез [1:3] берёт элементы с индекса 1 включительно до 3 не включая: [2,3]'},
+{q:'Что выведет?',code:'print(len([0] * 5))',opts:['0','1','5','ошибка'],ans:2,explain:'[0]*5 создаёт список из пяти нулей [0,0,0,0,0], его длина 5'},
+{q:'Что выведет?',code:'lst = [1, 2, 3]\nprint(lst[::-1])',opts:['[3,2,1]','[1,2,3]','[2,3]','ошибка'],ans:0,explain:'срез [::-1] с шагом -1 разворачивает список задом наперёд'}
 ],
 tasks:[
 {title:'Максимум',desc:'Найдите максимальный элемент без функции <code style="color:#a78bfa">max()</code>',starter:'lst = [5, 2, 8, 1, 9, 3]\n',expected:'9',inputs:[]},
@@ -501,11 +501,11 @@ theory:[
 {title:'in и форматирование',body:`<p style="margin-bottom:10px">Оператор <span class="kw">in</span> проверяет вхождение подстроки. f-строки удобнее всего для вставки переменных в строку.</p>`,code:`<span class="fn">print</span>(<span class="st">"py"</span> <span class="kw">in</span> <span class="st">"python"</span>)  <span class="cm"># True</span>\n<span class="fn">print</span>(<span class="st">"ha"</span> * <span class="nu">3</span>)            <span class="cm"># hahaha</span>\nname = <span class="st">"Саша"</span>\n<span class="fn">print</span>(<span class="st">f"Привет, {name.upper()}!"</span>)`,output:`True\nhahaha\nПривет, САША!`}
 ],
 quiz:[
-{q:'"hello".upper() = ?',opts:['hello','HELLO','Hello','ошибка'],ans:1,explain:'upper() переводит все символы строки в верхний регистр'},
-{q:'"  текст  ".strip() = ?',opts:['  текст  ','текст','текст  ','  текст'],ans:1,explain:'strip() убирает пробелы (и другие пробельные символы) по обоим краям строки'},
-{q:'"a,b,c".split(",") = ?',opts:['["a,b,c"]','["a","b","c"]','("a","b","c")','{"a","b","c"}'],ans:1,explain:'split(",") разбивает строку по запятой и возвращает список строк'},
-{q:'"python"[::-1] = ?',opts:['python','nohtyp','pytho','PYTHON'],ans:1,explain:'срез [::-1] разворачивает строку: "python" → "nohtyp"'},
-{q:'"ha"*3 = ?',opts:['ha3','ha ha ha','hahaha','ошибка'],ans:2,explain:'"ha"*3 повторяет строку три раза: "ha"+"ha"+"ha" = "hahaha"'}
+{q:'Что выведет?',code:'print("hello".upper())',opts:['hello','HELLO','Hello','ошибка'],ans:1,explain:'upper() переводит все символы строки в верхний регистр'},
+{q:'Что выведет?',code:'print("  текст  ".strip())',opts:['  текст  ','текст','текст  ','  текст'],ans:1,explain:'strip() убирает пробелы по обоим краям строки'},
+{q:'Что выведет?',code:'print("a,b,c".split(","))',opts:['["a,b,c"]','["a","b","c"]','("a","b","c")','{"a","b","c"}'],ans:1,explain:'split(",") разбивает строку по запятой и возвращает список строк'},
+{q:'Что выведет?',code:'print("python"[::-1])',opts:['python','nohtyp','pytho','PYTHON'],ans:1,explain:'срез [::-1] разворачивает строку: "python" → "nohtyp"'},
+{q:'Что выведет?',code:'print("ha" * 3)',opts:['ha3','ha ha ha','hahaha','ошибка'],ans:2,explain:'"ha"*3 повторяет строку три раза: "ha"+"ha"+"ha" = "hahaha"'}
 ],
 tasks:[
 {title:'ВЕРХНИЙ РЕГИСТР',desc:'Выведите строку в верхнем регистре',starter:'s = "Привет, мир!"\n',expected:'ПРИВЕТ, МИР!',inputs:[]},
@@ -525,10 +525,10 @@ theory:[
 {title:'Зачем функции?',body:`<p style="margin-bottom:10px">Принцип DRY — Don't Repeat Yourself. Функции делают код читаемым и позволяют писать код один раз и вызывать его много раз.</p>`,code:`<span class="cm"># Без функции — повторение!</span>\n<span class="fn">print</span>(<span class="st">"Привет, Саша! Рад тебя видеть!"</span>)\n<span class="fn">print</span>(<span class="st">"Привет, Аня! Рад тебя видеть!"</span>)\n\n<span class="cm"># С функцией — чисто!</span>\n<span class="kw">def</span> <span class="fn">welcome</span>(name):\n    <span class="fn">print</span>(<span class="st">f"Привет, {name}! Рад тебя видеть!"</span>)\n\n<span class="fn">welcome</span>(<span class="st">"Саша"</span>)\n<span class="fn">welcome</span>(<span class="st">"Аня"</span>)`,output:`Привет, Саша! Рад тебя видеть!\nПривет, Аня! Рад тебя видеть!\nПривет, Саша! Рад тебя видеть!\nПривет, Аня! Рад тебя видеть!`}
 ],
 quiz:[
-{q:'def f(x): return x*2; f(5) = ?',opts:['5','10','2','ошибка'],ans:1,explain:'f(5): x=5, возвращает 5×2 = 10'},
-{q:'def g(a=1,b=2): return a+b; g(3) = ?',opts:['3','5','6','ошибка'],ans:1,explain:'g(3): a=3 (передали явно), b=2 (по умолчанию); 3+2 = 5'},
+{q:'Что выведет?',code:'def f(x):\n    return x * 2\n\nprint(f(5))',opts:['5','10','2','ошибка'],ans:1,explain:'f(5): x=5, возвращает 5×2 = 10'},
+{q:'Что выведет?',code:'def g(a=1, b=2):\n    return a + b\n\nprint(g(3))',opts:['3','5','6','ошибка'],ans:1,explain:'g(3): a=3 (передали явно), b=2 (по умолчанию); 3+2 = 5'},
 {q:'Что возвращает функция без return?',opts:['0','False','None','ошибка'],ans:2,explain:'если return не написан, Python автоматически возвращает None — специальное значение «ничего»'},
-{q:'def sq(x): return x**2; sq(4) = ?',opts:['8','12','16','4'],ans:2,explain:'sq(4): x=4, возвращает 4**2 = 16'},
+{q:'Что выведет?',code:'def sq(x):\n    return x ** 2\n\nprint(sq(4))',opts:['8','12','16','4'],ans:2,explain:'sq(4): x=4, возвращает 4**2 = 16'},
 {q:'Можно ли вызвать функцию до её определения?',opts:['да','нет','зависит','да, если в if'],ans:1,explain:'Python читает код сверху вниз: def должен стоять выше вызова функции'}
 ],
 tasks:[
@@ -548,10 +548,10 @@ theory:[
 {title:'finally',body:`<p style="margin-bottom:10px"><span class="kw">finally</span> выполняется <b>всегда</b> — есть ошибка или нет. Удобно для закрытия файлов и т.д.</p>`,code:`<span class="kw">try</span>:\n    result = <span class="nu">10</span> / <span class="nu">2</span>\n    <span class="fn">print</span>(<span class="st">f"Результат: {result}"</span>)\nexcept <span class="bi">ZeroDivisionError</span>:\n    <span class="fn">print</span>(<span class="st">"Ошибка деления!"</span>)\n<span class="kw">finally</span>:\n    <span class="fn">print</span>(<span class="st">"Конец вычислений"</span>)`,output:`Результат: 5.0\nКонец вычислений`}
 ],
 quiz:[
-{q:'try: int("abc") except ValueError: print("ошибка") → ?',opts:['abc','ошибка','None','Exception'],ans:1,explain:'int("abc") вызывает ValueError, except его ловит и выводит "ошибка"'},
+{q:'Что выведет?',code:'try:\n    int("abc")\nexcept ValueError:\n    print("ошибка")',opts:['abc','ошибка','None','Exception'],ans:1,explain:'int("abc") вызывает ValueError, except его ловит и выводит "ошибка"'},
 {q:'Что НЕ поймает try/except?',opts:['ValueError','ZeroDivisionError','SyntaxError','TypeError'],ans:2,explain:'SyntaxError возникает при чтении кода ещё до его запуска — try/except его не перехватит'},
 {q:'finally выполняется...',opts:['только при ошибке','только без ошибки','всегда','никогда'],ans:2,explain:'finally запускается в любом случае — и когда ошибка была, и когда нет'},
-{q:'int("3.14") вызовет...',opts:['TypeError','FloatError','ValueError','SyntaxError'],ans:2,explain:'"3.14" содержит точку — int() не умеет с этим работать и выбрасывает ValueError'},
+{q:'Какую ошибку вызовет эта строка?',code:'int("3.14")',opts:['TypeError','FloatError','ValueError','SyntaxError'],ans:2,explain:'"3.14" содержит точку — int() не умеет с этим работать и выбрасывает ValueError'},
 {q:'Зачем нужен try/except?',opts:['ускорить код','избежать падения программы','удалить ошибки','отладить'],ans:1,explain:'try/except перехватывает ошибку и позволяет программе продолжить работу вместо аварийного завершения'}
 ],
 tasks:[
@@ -572,11 +572,11 @@ theory:[
 {title:'Паттерн счётчика',body:`<p style="margin-bottom:10px">Часто используют словарь для подсчёта повторений.</p>`,code:`text = <span class="st">"banana"</span>\ncounts = {}\n<span class="kw">for</span> ch <span class="kw">in</span> text:\n    counts[ch] = counts.get(ch, <span class="nu">0</span>) + <span class="nu">1</span>\n<span class="fn">print</span>(counts)`,output:`{'b': 1, 'a': 3, 'n': 2}`}
 ],
 quiz:[
-{q:'d={}; d["a"]=1; d["a"]=2; d["a"] → ?',opts:['1','2','[1,2]','ошибка'],ans:1,explain:'каждый ключ в словаре уникален: второе присвоение перезаписывает первое'},
-{q:'d.get("z", 0) когда "z" нет → ?',opts:['None','KeyError','0','False'],ans:2,explain:'get(key, default) возвращает default, если ключ не найден — в отличие от d[key], который бросает KeyError'},
-{q:'for k,v in d.items() перебирает...',opts:['только ключи','только значения','пары ключ-значение','индексы'],ans:2,explain:'items() возвращает пары (ключ, значение), поэтому удобно распаковывать в k, v'},
-{q:'list({"a":1,"b":2}.keys()) → ?',opts:['[1,2]','["a","b"]','("a","b")','{"a","b"}'],ans:1,explain:'keys() возвращает все ключи словаря; list() превращает их в список'},
-{q:'d[w]=d.get(w,0)+1 — это...',opts:['удаление ключа','поиск значения','паттерн счётчика','сортировка'],ans:2,explain:'берём текущее значение (или 0, если ключа нет) и прибавляем 1 — классический подсчёт повторений'}
+{q:'Что выведет?',code:'d = {}\nd["a"] = 1\nd["a"] = 2\nprint(d["a"])',opts:['1','2','[1,2]','ошибка'],ans:1,explain:'каждый ключ в словаре уникален: второе присвоение перезаписывает первое'},
+{q:'Что выведет?',code:'d = {"a": 1}\nprint(d.get("z", 0))',opts:['None','KeyError','0','False'],ans:2,explain:'get(key, default) возвращает default, если ключ не найден — в отличие от d[key], который бросает KeyError'},
+{q:'for k, v in d.items() перебирает...',opts:['только ключи','только значения','пары ключ-значение','индексы'],ans:2,explain:'items() возвращает пары (ключ, значение), поэтому удобно распаковывать в k, v'},
+{q:'Что выведет?',code:'d = {"a": 1, "b": 2}\nprint(list(d.keys()))',opts:['[1,2]','["a","b"]','("a","b")','{"a","b"}'],ans:1,explain:'keys() возвращает все ключи словаря; list() превращает их в список'},
+{q:'Что делает эта строка?',code:'counts[ch] = counts.get(ch, 0) + 1',opts:['удаляет ключ','ищет значение','считает повторения','сортирует'],ans:2,explain:'берём текущее значение (или 0, если ключа нет) и прибавляем 1 — классический подсчёт повторений'}
 ],
 tasks:[
 {title:'Сумма цен',desc:'Найдите и выведите сумму всех цен в словаре',starter:'prices = {"сок": 100, "чай": 50, "вода": 30}\n',expected:'180',inputs:[]},
@@ -595,11 +595,11 @@ theory:[
 {title:'Распаковка',body:`<p style="margin-bottom:10px">Кортеж можно распаковать в отдельные переменные. Звёздочка <span class="bi">*</span> собирает остаток.</p>`,code:`a, b, c = (<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>)\n<span class="fn">print</span>(a, b, c)        <span class="cm"># 1 2 3</span>\nfirst, *rest = (<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>, <span class="nu">4</span>, <span class="nu">5</span>)\n<span class="fn">print</span>(first)          <span class="cm"># 1</span>\n<span class="fn">print</span>(rest)           <span class="cm"># [2, 3, 4, 5]</span>`,output:`1 2 3\n1\n[2, 3, 4, 5]`}
 ],
 quiz:[
-{q:'t=(1,2,3); t[1] → ?',opts:['1','2','3','ошибка'],ans:1,explain:'индексы у кортежей как у списков, начинаются с 0: t[1] — второй элемент (2)'},
-{q:'a,b=(10,20); a → ?',opts:['10','20','(10,20)','ошибка'],ans:0,explain:'при распаковке a получает первый элемент кортежа — 10'},
+{q:'Что выведет?',code:'t = (1, 2, 3)\nprint(t[1])',opts:['1','2','3','ошибка'],ans:1,explain:'индексы у кортежей как у списков, начинаются с 0: t[1] — второй элемент (2)'},
+{q:'Что выведет?',code:'a, b = (10, 20)\nprint(a)',opts:['10','20','(10,20)','ошибка'],ans:0,explain:'при распаковке a получает первый элемент кортежа — 10'},
 {q:'Можно ли изменить элемент кортежа?',opts:['да','нет — TypeError','нет — ValueError','да, через метод'],ans:1,explain:'кортежи неизменяемы — любая попытка изменить элемент вызывает TypeError'},
-{q:'len((1,2,3,4)) → ?',opts:['3','4','5','ошибка'],ans:1,explain:'в кортеже четыре элемента, len возвращает 4'},
-{q:'(1,2)+(3,4) → ?',opts:['(1,2,3,4)','[1,2,3,4]','ошибка','(4,6)'],ans:0,explain:'сложение кортежей создаёт новый кортеж из всех элементов обоих'}
+{q:'Что выведет?',code:'print(len((1, 2, 3, 4)))',opts:['3','4','5','ошибка'],ans:1,explain:'в кортеже четыре элемента, len возвращает 4'},
+{q:'Что выведет?',code:'print((1, 2) + (3, 4))',opts:['(1,2,3,4)','[1,2,3,4]','ошибка','(4,6)'],ans:0,explain:'сложение кортежей создаёт новый кортеж из всех элементов обоих'}
 ],
 tasks:[
 {title:'Max и Min',desc:'Выведите max и min кортежа (каждое на новой строке)',starter:'t = (5, 2, 8, 1, 9)\n',expected:'9\n1',inputs:[]},
@@ -618,11 +618,11 @@ theory:[
 {title:'Методы',body:`<p style="margin-bottom:10px"><span class="bi">add()</span> добавляет, <span class="bi">remove()</span>/<span class="bi">discard()</span> удаляют. <span class="bi">in</span> проверяет наличие.</p>`,code:`s = {<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>}\ns.add(<span class="nu">4</span>)        <span class="cm"># {1,2,3,4}</span>\ns.discard(<span class="nu">2</span>)    <span class="cm"># {1,3,4}</span>\n<span class="fn">print</span>(<span class="nu">3</span> <span class="kw">in</span> s)   <span class="cm"># True</span>\n<span class="fn">print</span>(<span class="fn">len</span>(s))   <span class="cm"># 3</span>`,output:`True\n3`}
 ],
 quiz:[
-{q:'len({1,2,2,3,3}) → ?',opts:['5','3','2','4'],ans:1,explain:'множество хранит только уникальные элементы: {1,2,2,3,3} → {1,2,3}, три элемента'},
-{q:'{1,2,3}&{2,3,4} → ?',opts:['{1,2,3,4}','{2,3}','{1,4}','{1,2,3}'],ans:1,explain:'& — пересечение: только те элементы, которые есть в обоих множествах'},
-{q:'{1,2,3}|{3,4,5} → ?',opts:['{3}','{1,2,4,5}','{1,2,3,4,5}','{1,5}'],ans:2,explain:'| — объединение: все уникальные элементы из обоих множеств'},
-{q:'s={1,2}; s.add(2); len(s) → ?',opts:['1','2','3','ошибка'],ans:1,explain:'2 уже есть в множестве, дубликаты не добавляются — размер остаётся 2'},
-{q:'5 in {1,3,5,7} → ?',opts:['False','True','None','ошибка'],ans:1,explain:'оператор in проверяет наличие элемента: 5 есть в множестве → True'}
+{q:'Что выведет?',code:'print(len({1, 2, 2, 3, 3}))',opts:['5','3','2','4'],ans:1,explain:'множество хранит только уникальные элементы: {1,2,2,3,3} → {1,2,3}, три элемента'},
+{q:'Что выведет?',code:'a = {1, 2, 3}\nb = {2, 3, 4}\nprint(a & b)',opts:['{1,2,3,4}','{2,3}','{1,4}','{1,2,3}'],ans:1,explain:'& — пересечение: только те элементы, которые есть в обоих множествах'},
+{q:'Что выведет?',code:'a = {1, 2, 3}\nb = {3, 4, 5}\nprint(a | b)',opts:['{3}','{1,2,4,5}','{1,2,3,4,5}','{1,5}'],ans:2,explain:'| — объединение: все уникальные элементы из обоих множеств'},
+{q:'Что выведет?',code:'s = {1, 2}\ns.add(2)\nprint(len(s))',opts:['1','2','3','ошибка'],ans:1,explain:'2 уже есть в множестве, дубликаты не добавляются — размер остаётся 2'},
+{q:'Что выведет?',code:'print(5 in {1, 3, 5, 7})',opts:['False','True','None','ошибка'],ans:1,explain:'оператор in проверяет наличие элемента: 5 есть в множестве → True'}
 ],
 tasks:[
 {title:'Уникальные элементы',desc:'Выведите количество уникальных элементов в lst',starter:'lst = [1, 2, 2, 3, 3, 4]\n',expected:'4',inputs:[]},
@@ -945,7 +945,7 @@ function renderQuiz(container){
     const div=document.createElement('div');
     div.id='quiz-item-'+qi;
     div.style.cssText='background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px';
-    div.innerHTML=`<div style="font-weight:600;font-size:15px;margin-bottom:14px;line-height:1.5">${qi+1}. ${escHtml(q.q)}</div>`;
+    div.innerHTML=`<div style="font-weight:600;font-size:15px;margin-bottom:${q.code?'10px':'14px'};line-height:1.5">${qi+1}. ${escHtml(q.q)}</div>${q.code?`<div class="code-block" style="margin-bottom:14px;font-size:13px"><pre>${escHtml(q.code)}</pre></div>`:''}`;
     q.opts.forEach((opt,oi)=>{
       const btn=document.createElement('button');
       btn.className='quiz-option';
