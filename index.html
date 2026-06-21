@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>🐍 Летний Python-марафон</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{--bg:#f0f4ff;--bg2:#ffffff;--bg3:#e8edf9;--border:#dde3f2;--text:#1a1f36;--muted:#6b748f;--shadow:0 2px 12px rgba(99,102,241,0.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+.screen{display:none;animation:fadeIn .3s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@keyframes popIn{0%{transform:scale(0.5);opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(250,204,21,.4)}50%{box-shadow:0 0 40px rgba(250,204,21,.8)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes xpFloat{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-50px)}}
+.shake{animation:shake .4s ease}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;transition:all .25s ease;box-shadow:var(--shadow)}
+.card:hover{transform:translateY(-3px);box-shadow:0 6px 24px rgba(99,102,241,0.14)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;transition:all .2s ease}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff}
+.btn-primary:hover:not(:disabled){background:linear-gradient(135deg,#4f46e5,#7c3aed);transform:translateY(-1px)}
+.btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover:not(:disabled){background:var(--bg2);border-color:rgba(99,102,241,.3)}
+.btn-run{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-size:15px;padding:12px 28px}
+.btn-run:hover:not(:disabled){background:linear-gradient(135deg,#16a34a,#15803d);transform:translateY(-1px)}
+.btn-check{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:15px;padding:12px 28px}
+.btn-check:hover:not(:disabled){transform:translateY(-1px)}
+.hud{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.hud-title{font-size:18px;font-weight:800;background:linear-gradient(135deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+.level-badge{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:13px;font-weight:600;white-space:nowrap}
+.xp-bar-wrap{flex:1;min-width:80px;max-width:200px}
+.xp-bar-bg{background:var(--bg3);border-radius:99px;height:8px;overflow:hidden}
+.xp-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#6366f1,#a78bfa);transition:width .5s ease}
+.xp-label{font-size:11px;color:var(--muted);margin-top:2px}
+.medals-count{display:flex;align-items:center;gap:4px;font-size:14px;font-weight:600}
+.topic-card{background:var(--bg2);border-radius:16px;border:1px solid var(--border);border-top-width:3px;padding:20px;cursor:pointer;transition:all .25s ease;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.topic-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at top left,var(--glow-color,transparent) 0%,transparent 60%);opacity:0;transition:opacity .3s}
+.topic-card:hover{transform:translateY(-4px)}
+.topic-card:hover::before{opacity:.08}
+.topic-card.completed{border-color:rgba(34,197,94,.5)!important}
+.topic-card.completed:hover{box-shadow:0 8px 32px rgba(34,197,94,.2)!important}
+.stars{color:#c4c9dd;font-size:15px;letter-spacing:1px}
+.stars .filled{color:#f59e0b}
+.tab-btn{padding:10px 20px;border-radius:10px;border:none;background:transparent;color:var(--muted);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.tab-btn.active{background:var(--bg3);color:var(--text);box-shadow:0 0 0 1px var(--border)}
+.tab-btn:hover:not(.active){color:var(--text)}
+.theory-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;animation:slideUp .3s ease;box-shadow:var(--shadow)}
+.code-block{background:#f4f6fd;border:1px solid #dde3f2;border-radius:8px;padding:16px;font-family:'Fira Code',monospace;font-size:13px;line-height:1.7;overflow-x:auto;margin:10px 0;position:relative;color:#1a1f36}
+.code-output{background:#eef1fa;border-top:1px solid #dde3f2;padding:10px 16px;font-family:'Fira Code',monospace;font-size:12px;color:#475569;margin-top:0;border-radius:0 0 8px 8px}
+.quiz-option{width:100%;text-align:left;padding:14px 18px;border-radius:10px;border:2px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;cursor:pointer;transition:all .2s;margin-bottom:8px;display:block;box-shadow:0 1px 4px rgba(99,102,241,0.06)}
+.quiz-option:hover:not(:disabled){border-color:rgba(99,102,241,.5);background:rgba(99,102,241,.06)}
+.quiz-option.correct{border-color:#16a34a!important;background:rgba(34,197,94,.1)!important;color:#15803d}
+.quiz-option.wrong{border-color:#dc2626!important;background:rgba(239,68,68,.08)!important;color:#dc2626}
+.quiz-option:disabled{cursor:not-allowed;opacity:.7}
+.output-area{background:#f8faff;border:1px solid var(--border);border-radius:10px;padding:14px;font-family:'Fira Code',monospace;font-size:13px;min-height:60px;white-space:pre-wrap;word-break:break-all;color:#334155;margin-top:12px}
+.output-area.success{border-color:rgba(22,163,74,.4);background:#f0fdf4;color:#15803d}
+.output-area.error{border-color:rgba(220,38,38,.3);background:#fff5f5;color:#dc2626}
+.overlay{position:fixed;inset:0;background:rgba(30,35,60,.7);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
+.medal-box{background:linear-gradient(135deg,#fff9e6,#fffbf0);border:2px solid rgba(250,204,21,.5);border-radius:24px;padding:48px 40px;text-align:center;max-width:380px;width:90%;animation:popIn .5s ease;box-shadow:0 20px 60px rgba(250,204,21,.2)}
+.medal-icon{font-size:80px;animation:glow 2s ease infinite;display:inline-block}
+.xp-float{position:fixed;font-size:18px;font-weight:800;color:#a78bfa;pointer-events:none;z-index:9999;animation:xpFloat .8s ease forwards}
+.pyodide-status{position:fixed;bottom:16px;right:16px;background:var(--bg2);border:1px solid var(--border);border-radius:99px;padding:6px 14px;font-size:12px;color:var(--muted);z-index:200;display:flex;align-items:center;gap:6px;transition:all .3s}
+.spinner{width:12px;height:12px;border:2px solid rgba(99,102,241,.3);border-top-color:#6366f1;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+.CodeMirror{height:auto;min-height:140px;font-family:'Fira Code',monospace;font-size:13px;border-radius:10px;border:1px solid rgba(99,102,241,.3)}
+.CodeMirror-scroll{min-height:140px}
+/* Syntax colors in theory */
+.kw{color:#7c00d4}.fn{color:#0070c1}.st{color:#a31515}.cm{color:#6a9955;font-style:italic}.nu{color:#098658}.op{color:#7c00d4}.bi{color:#267f99}
+.topic-header-accent{height:4px;border-radius:4px;margin-bottom:20px}
+.progress-ring{width:36px;height:36px}
+.back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;padding:8px 0;transition:color .2s}
+.back-btn:hover{color:var(--text)}
+.task-result-ok{background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.3);border-radius:10px;padding:14px;color:#15803d;font-size:14px;font-weight:600;margin-top:12px}
+.task-result-err{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.25);border-radius:10px;padding:14px;color:#dc2626;font-size:14px;margin-top:12px}
+.task-passed-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(22,163,74,.1);border:1px solid rgba(22,163,74,.3);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#15803d}
+pre{margin:0}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(99,102,241,.2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(99,102,241,.35)}
+/* Login */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f0f4ff 0%,#e8edf9 100%)}
+.login-box{background:#fff;border:1px solid var(--border);border-radius:24px;padding:48px 40px;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(99,102,241,.12)}
+.login-input{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;color:var(--text);outline:none;transition:border-color .2s;background:#fff}
+.login-input:focus{border-color:#6366f1}
+.login-error{color:#dc2626;font-size:13px;margin-top:8px;display:none}
+/* Quiz explain */
+.quiz-explain{background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:12px 16px;font-size:13px;color:#0369a1;margin-top:8px;line-height:1.5}
+.quiz-explain.correct-ex{background:#f0fdf4;border-color:#86efac;color:#15803d}
+/* Retake btn */
+.btn-retake{background:var(--bg3);color:var(--muted);border:1px solid var(--border);font-size:13px;padding:8px 16px}
+.btn-retake:hover{background:var(--bg2);color:var(--text);border-color:rgba(99,102,241,.3)}
+/* Admin */
+.admin-stat-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;text-align:center;box-shadow:var(--shadow)}
+.admin-stat-val{font-size:28px;font-weight:800;color:#6366f1}
+.admin-stat-label{font-size:12px;color:var(--muted);margin-top:4px}
+.admin-table{width:100%;border-collapse:collapse;font-size:13px}
+.admin-table th{text-align:left;padding:10px 12px;background:var(--bg3);font-weight:700;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.admin-table td{padding:10px 12px;border-bottom:1px solid var(--border)}
+.admin-table tr:last-child td{border-bottom:none}
+.admin-table tr:hover td{background:var(--bg)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="screen active" id="loginScreen">
+  <div class="login-wrap">
+    <div class="login-box">
+      <div style="text-align:center;margin-bottom:32px">
+        <div style="font-size:52px;margin-bottom:12px">🐍</div>
+        <h1 style="font-size:24px;font-weight:800;color:var(--text)">Летний Python-марафон</h1>
+        <p style="color:var(--muted);font-size:14px;margin-top:6px">Введите логин и пароль</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <input class="login-input" id="loginInput" type="text" placeholder="Логин" autocomplete="username"
+          onkeydown="if(event.key==='Enter')document.getElementById('passInput').focus()"/>
+        <input class="login-input" id="passInput" type="password" placeholder="Пароль" autocomplete="current-password"
+          onkeydown="if(event.key==='Enter')tryLogin()"/>
+        <div class="login-error" id="loginError">Неверный логин или пароль</div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:14px;margin-top:4px" onclick="tryLogin()">Войти →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN SCREEN -->
+<div class="screen" id="adminScreen">
+  <div class="hud">
+    <div class="hud-title">🔐 Панель учителя</div>
+    <div style="margin-left:auto">
+      <button class="btn btn-secondary" onclick="logout()">Выйти</button>
+    </div>
+  </div>
+  <div style="max-width:960px;margin:0 auto;padding:32px 20px" id="adminContent"></div>
+</div>
+
+<!-- Pyodide status indicator -->
+<div class="pyodide-status" id="pyStatus">
+  <div class="spinner" id="pySpinner"></div>
+  <span id="pyStatusText">Python загружается...</span>
+</div>
+
+<!-- Medal overlay -->
+<div class="overlay" id="medalOverlay" style="display:none">
+  <div class="medal-box">
+    <div class="medal-icon">🏅</div>
+    <h2 style="font-size:26px;font-weight:800;margin:20px 0 8px">Медаль получена!</h2>
+    <p style="color:#6b748f;font-size:16px;margin-bottom:12px">Тема завершена!</p>
+    <div style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.25);border-radius:12px;padding:16px;margin:20px 0;font-size:22px;font-weight:800;color:#4f46e5" id="medalXP"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;font-size:16px;padding:14px" onclick="closeMedal()">Продолжить 🚀</button>
+  </div>
+</div>
+
+<!-- SCREEN: HOME -->
+<div class="screen" id="homeScreen">
+  <div class="hud">
+    <div class="hud-title">🐍 Летний Python-марафон</div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div class="level-badge" id="hudLevel">🐣 Новичок</div>
+      <div class="xp-bar-wrap">
+        <div class="xp-bar-bg"><div class="xp-bar-fill" id="hudXpBar" style="width:0%"></div></div>
+        <div class="xp-label" id="hudXpLabel">0 XP</div>
+      </div>
+      <div class="medals-count">🏅 <span id="hudMedals">0</span>/12</div>
+      <button class="btn btn-secondary" style="font-size:12px;padding:6px 12px" onclick="logout()">Выйти</button>
+    </div>
+  </div>
+
+  <div style="max-width:960px;margin:0 auto;padding:32px 20px">
+    <div style="text-align:center;margin-bottom:40px;padding:32px 20px;background:linear-gradient(135deg,#f0f4ff,#fff);border-radius:20px;border:1px solid var(--border);box-shadow:0 4px 20px rgba(99,102,241,0.1)">
+      <div style="font-size:48px;margin-bottom:12px">🐍</div>
+      <h1 style="font-size:36px;font-weight:800;background:linear-gradient(135deg,#a78bfa,#60a5fa,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px">Саша, добрый день!</h1>
+
+      <div style="display:flex;justify-content:center;gap:24px;margin-top:20px;flex-wrap:wrap">
+        <div style="text-align:center"><div style="font-size:28px;font-weight:800;color:#a78bfa" id="statXP">0</div><div style="font-size:12px;color:var(--muted)">XP заработано</div></div>
+        <div style="text-align:center"><div style="font-size:28px;font-weight:800;color:#60a5fa" id="statTopics">0</div><div style="font-size:12px;color:var(--muted)">Тем пройдено</div></div>
+        <div style="text-align:center"><div style="font-size:28px;font-weight:800;color:#34d399" id="statMedals">0</div><div style="font-size:12px;color:var(--muted)">Медалей</div></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px" id="topicGrid"></div>
+  </div>
+</div>
+
+<!-- SCREEN: TOPIC -->
+<div class="screen" id="topicScreen">
+  <div class="hud">
+    <button class="back-btn" onclick="goHome()">← Назад</button>
+    <div style="margin-left:16px;font-weight:700;font-size:16px" id="topicHudTitle"></div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div class="level-badge" id="topicHudLevel">🐣 Новичок</div>
+      <div class="xp-bar-wrap">
+        <div class="xp-bar-bg"><div class="xp-bar-fill" id="topicHudXpBar" style="width:0%"></div></div>
+        <div class="xp-label" id="topicHudXpLabel">0 XP</div>
+      </div>
+      <div class="medals-count">🏅 <span id="topicHudMedals">0</span>/12</div>
+    </div>
+  </div>
+
+  <div style="max-width:860px;margin:0 auto;padding:28px 20px">
+    <div style="margin-bottom:24px" id="topicHeader"></div>
+    <div style="display:flex;gap:8px;margin-bottom:24px;background:var(--bg2);border-radius:14px;padding:6px;border:1px solid var(--border)">
+      <button class="tab-btn active" id="tabTheory" onclick="switchTab('theory')">📖 Теория</button>
+      <button class="tab-btn" id="tabQuiz" onclick="switchTab('quiz')">❓ Тест</button>
+      <button class="tab-btn" id="tabTasks" onclick="switchTab('tasks')">💻 Задачи</button>
+    </div>
+    <div id="tabContent"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/pyodide@0.25.1/pyodide.js"></script>
+<script>
+// ============================
+// AUTH & SESSION
+// ============================
+const STUDENT_LOGIN = 'sasha';
+const STUDENT_PASS  = 'python2026';
+const ADMIN_LOGIN   = 'teacher';
+const ADMIN_PASS    = 'repet2026';
+
+let currentRole = null;
+let _sessionStart = null;
+
+function tryLogin(){
+  const login = document.getElementById('loginInput').value.trim().toLowerCase();
+  const pass  = document.getElementById('passInput').value;
+  const err   = document.getElementById('loginError');
+  err.style.display = 'none';
+  if(login === STUDENT_LOGIN && pass === STUDENT_PASS){
+    currentRole = 'student';
+    _sessionStart = Date.now();
+    _markDayActive();
+    showScreen('homeScreen');
+    renderTopicGrid();
+    updateHUD();
+  } else if(login === ADMIN_LOGIN && pass === ADMIN_PASS){
+    currentRole = 'admin';
+    showScreen('adminScreen');
+    renderAdmin();
+  } else {
+    err.style.display = 'block';
+    document.getElementById('passInput').value = '';
+  }
+}
+
+function logout(){
+  _saveSession();
+  currentRole = null;
+  _sessionStart = null;
+  document.getElementById('loginInput').value = '';
+  document.getElementById('passInput').value = '';
+  showScreen('loginScreen');
+}
+
+function _markDayActive(){
+  const p = getProgress();
+  const today = new Date().toISOString().slice(0,10);
+  if(!p.activeDays) p.activeDays = [];
+  if(!p.activeDays.includes(today)) p.activeDays.push(today);
+  saveProgress(p);
+}
+
+function _saveSession(){
+  if(!_sessionStart) return;
+  const dur = Date.now() - _sessionStart;
+  const p = getProgress();
+  if(!p.totalMs) p.totalMs = 0;
+  p.totalMs += dur;
+  if(!p.sessions) p.sessions = [];
+  p.sessions.push({ date: new Date().toISOString().slice(0,10), dur });
+  saveProgress(p);
+  _sessionStart = null;
+}
+
+// Auto-save on page close / tab hide
+window.addEventListener('beforeunload', _saveSession);
+document.addEventListener('visibilitychange', ()=>{
+  if(document.hidden && currentRole === 'student') _saveSession();
+  else if(!document.hidden && currentRole === 'student') {
+    _sessionStart = Date.now();
+    _markDayActive();
+  }
+});
+
+// ============================
+// ADMIN DASHBOARD
+// ============================
+function renderAdmin(){
+  const p = getProgress();
+  const totalMs = p.totalMs || 0;
+  const days = (p.activeDays || []).length;
+  const sessions = (p.sessions || []);
+  const medals = countMedals();
+
+  function fmtTime(ms){
+    const h = Math.floor(ms/3600000);
+    const m = Math.floor((ms%3600000)/60000);
+    if(h > 0) return h+'ч '+m+'м';
+    return m+'м';
+  }
+
+  let totalQuizQ = 0, totalQuizOk = 0, totalTasks = 0, totalTasksOk = 0;
+  TOPICS.forEach(t=>{
+    totalQuizQ += t.quiz.length;
+    totalQuizOk += countQuizCorrect(t.id);
+    totalTasks += t.tasks.length;
+    totalTasksOk += countTasksPassed(t.id);
+  });
+
+  const lvl = getLevelInfo(p.xp || 0);
+
+  // Last 5 sessions
+  const recentSessions = [...sessions].reverse().slice(0,5);
+
+  const el = document.getElementById('adminContent');
+  el.innerHTML = `
+    <h2 style="font-size:22px;font-weight:800;margin-bottom:24px">Прогресс Саши</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;margin-bottom:32px">
+      <div class="admin-stat-card"><div class="admin-stat-val">${p.xp||0}</div><div class="admin-stat-label">XP заработано</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-val">${lvl.label.split(' ').slice(1).join(' ')}</div><div class="admin-stat-label">Уровень</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-val">${medals}</div><div class="admin-stat-label">Медалей / 12</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-val">${days}</div><div class="admin-stat-label">Дней занятий</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-val">${fmtTime(totalMs)}</div><div class="admin-stat-label">Всего времени</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-val">${sessions.length}</div><div class="admin-stat-label">Сессий</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-val">${totalQuizOk}/${totalQuizQ}</div><div class="admin-stat-label">Тест правильно</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-val">${totalTasksOk}/${totalTasks}</div><div class="admin-stat-label">Задач решено</div></div>
+    </div>
+
+    <h3 style="font-size:16px;font-weight:700;margin-bottom:12px">По темам</h3>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:32px">
+      <table class="admin-table">
+        <thead><tr><th>Тема</th><th>Тест</th><th>Задачи</th><th>Медаль</th></tr></thead>
+        <tbody>${TOPICS.map(t=>{
+          const tp = getTopicProgress(t.id);
+          const qOk = t.type==='practice'?'—':countQuizCorrect(t.id)+'/'+t.quiz.length;
+          const tOk = countTasksPassed(t.id)+'/'+t.tasks.length;
+          const medal = tp.medal?'🏅':'—';
+          return `<tr><td><b>${t.emoji} ${t.title}</b></td><td>${qOk}</td><td>${tOk}</td><td>${medal}</td></tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>
+
+    <h3 style="font-size:16px;font-weight:700;margin-bottom:12px">Последние сессии</h3>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden">
+      <table class="admin-table">
+        <thead><tr><th>Дата</th><th>Длительность</th></tr></thead>
+        <tbody>${recentSessions.length ? recentSessions.map(s=>`<tr><td>${s.date}</td><td>${fmtTime(s.dur)}</td></tr>`).join('') : '<tr><td colspan="2" style="color:var(--muted)">Сессий пока нет</td></tr>'}</tbody>
+      </table>
+    </div>`;
+}
+
+// ============================
+// DATA
+// ============================
+const LEVELS=[
+  {xp:0,label:'🐣 Новичок'},
+  {xp:100,label:'🐍 Питонёнок'},
+  {xp:250,label:'⚡ Junior Dev'},
+  {xp:500,label:'🔥 Middle Dev'},
+  {xp:750,label:'🚀 Senior Dev'},
+  {xp:1000,label:'👑 Python Master'}
+];
+
+const TOPICS=[
+{id:'print',num:1,emoji:'🖨️',title:'print и input',subtitle:'Вывод и ввод данных',hue:250,
+theory:[
+{title:'Функция print()',body:`<p style="margin-bottom:10px">Функция <span class="kw">print</span>() выводит информацию на экран. Можно передавать несколько аргументов — они разделятся пробелом.</p>`,code:`<span class="fn">print</span>(<span class="st">"Привет!"</span>)\n<span class="fn">print</span>(<span class="nu">42</span>)\n<span class="fn">print</span>(<span class="st">"Возраст:"</span>, <span class="nu">15</span>)`,output:`Привет!\n42\nВозраст: 15`},
+{title:'sep и end',body:`<p style="margin-bottom:10px">Параметр <span class="bi">sep</span> задаёт разделитель между аргументами (по умолчанию — пробел). Параметр <span class="bi">end</span> задаёт символ в конце (по умолчанию — перенос строки).</p>`,code:`<span class="fn">print</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>, sep=<span class="st">"-"</span>)\n<span class="fn">print</span>(<span class="st">"ok"</span>, end=<span class="st">"!"</span>)\n<span class="fn">print</span>(<span class="st">" продолжение"</span>)`,output:`a-b-c\nok! продолжение`},
+{title:'Функция input()',body:`<p style="margin-bottom:10px">Функция <span class="fn">input</span>() считывает строку с клавиатуры. Она <b>всегда</b> возвращает строку (<span class="bi">str</span>)!</p>`,code:`name = <span class="fn">input</span>(<span class="st">"Как тебя зовут? "</span>)\nage = <span class="kw">int</span>(<span class="fn">input</span>(<span class="st">"Сколько лет? "</span>))\n<span class="fn">print</span>(<span class="st">f"Привет, {name}! Тебе {age} лет."</span>)`,output:`Как тебя зовут? Саша\nСколько лет? 15\nПривет, Саша! Тебе 15 лет.`},
+{title:'Приведение типов',body:`<p style="margin-bottom:10px">Чтобы работать с числами, нужно преобразовать строку в нужный тип.</p>`,code:`<span class="kw">int</span>(<span class="st">"42"</span>)      <span class="cm"># → 42</span>\n<span class="kw">float</span>(<span class="st">"3.14"</span>)  <span class="cm"># → 3.14</span>\n<span class="kw">str</span>(<span class="nu">100</span>)      <span class="cm"># → "100"</span>\n<span class="kw">bool</span>(<span class="nu">0</span>)       <span class="cm"># → False</span>\n<span class="kw">bool</span>(<span class="nu">1</span>)       <span class="cm"># → True</span>`,output:`42\n3.14\n100\nFalse\nTrue`}
+],
+quiz:[
+{q:'Что выведет: print("a", "b", sep="-")?',opts:['a b','a-b','a,b',"'a-b'"],ans:1,explain:'sep="-" ставит дефис между аргументами вместо пробела по умолчанию'},
+{q:'Какой тип возвращает input()?',opts:['int','float','str','любой'],ans:2,explain:'input() всегда возвращает строку (str), даже если пользователь ввёл число'},
+{q:'Что выведет: print("x", end="!")?',opts:['x\\n','x!','"x!"','x'],ans:1,explain:'end="!" заменяет символ переноса строки — после x будет напечатан !'},
+{q:'Как правильно считать число с клавиатуры?',opts:['input(int())','int(input())','number(input())','readInt()'],ans:1,explain:'сначала input() читает строку, затем int() переводит её в число'},
+{q:'Что выведет: print(1, 2, 3, sep="*")?',opts:['1 2 3','123','1*2*3','1,2,3'],ans:2,explain:'sep="*" ставит * между каждым аргументом: 1*2*3'}
+],
+tasks:[
+{title:'Привет, Python!',desc:'Выведите на экран: <code style="color:#a78bfa">Привет, Python!</code>',starter:'',expected:'Привет, Python!',inputs:[]},
+{title:'Числа через дефис',desc:'Выведите: <code style="color:#a78bfa">1-2-3</code> (одной строкой, без цикла)',starter:'',expected:'1-2-3',inputs:[]},
+{title:'Сумма переменных',desc:'Переменные <code style="color:#a78bfa">a</code> и <code style="color:#a78bfa">b</code> уже заданы. Выведите их сумму.',starter:'a = 10\nb = 3\n',expected:'13',inputs:[]},
+{title:'Форматированный чек',desc:'<code>price=1490</code>, <code>discount=200</code>. Выведите:\n<pre>====================\nЦена:    1490 руб.\nСкидка:   200 руб.\nИтого:   1290 руб.\n====================</pre>',starter:'price = 1490\ndiscount = 200\n',expected:'====================\nЦена:    1490 руб.\nСкидка:   200 руб.\nИтого:   1290 руб.\n====================',inputs:[]},
+{title:'Три в одну строку',desc:'<code>name="Александр"</code>, <code>age=15</code>, <code>city="Москва"</code>. Выведите одной строкой через <code>" | "</code>: <b>Александр | 15 | Москва</b>',starter:'name = "Александр"\nage = 15\ncity = "Москва"\n',expected:'Александр | 15 | Москва',inputs:[]},
+{title:'Таблица данных',desc:'Выведите мини-таблицу (строго по образцу):\n<pre>Имя:     Александр\nКласс:   9\nОценка:  5</pre>',starter:'name = "Александр"\ngrade = 9\nscore = 5\n',expected:'Имя:     Александр\nКласс:   9\nОценка:  5',inputs:[]},
+{title:'Визитка',desc:'Выведите «визитку» строго по образцу (используйте print с несколькими аргументами):\n<pre>=== Визитка ===\nИмя: Александр\nВозраст: 15\nГород: Москва</pre>',starter:'name = "Александр"\nage = 15\ncity = "Москва"\n',expected:'=== Визитка ===\nИмя: Александр\nВозраст: 15\nГород: Москва',inputs:[]}
+]},
+
+{id:'vars',num:2,emoji:'📦',title:'Переменные и типы',subtitle:'Данные и арифметика',hue:210,
+theory:[
+{title:'Переменные',body:`<p style="margin-bottom:10px">Переменная — это контейнер для данных. Имена пишут в стиле <span class="bi">snake_case</span>.</p>`,code:`name = <span class="st">"Саша"</span>\nage = <span class="nu">15</span>\npi = <span class="nu">3.14</span>\nok = <span class="kw">True</span>`,output:`— (переменные сохранены в памяти)`},
+{title:'Типы данных',body:`<p style="margin-bottom:10px">Python автоматически определяет тип. Функция <span class="fn">type</span>() показывает тип переменной.</p>`,code:`<span class="fn">print</span>(<span class="fn">type</span>(<span class="nu">42</span>))         <span class="cm"># int</span>\n<span class="fn">print</span>(<span class="fn">type</span>(<span class="nu">3.14</span>))       <span class="cm"># float</span>\n<span class="fn">print</span>(<span class="fn">type</span>(<span class="st">"Привет"</span>))  <span class="cm"># str</span>\n<span class="fn">print</span>(<span class="fn">type</span>(<span class="kw">True</span>))       <span class="cm"># bool</span>`,output:`<class 'int'>\n<class 'float'>\n<class 'str'>\n<class 'bool'>`},
+{title:'f-строки',body:`<p style="margin-bottom:10px">f-строки — удобный способ вставить переменные в строку. Пишем <span class="bi">f"..."</span> и используем <span class="bi">{переменная}</span>.</p>`,code:`name = <span class="st">"Саша"</span>\nage = <span class="nu">15</span>\n<span class="fn">print</span>(<span class="st">f"Привет, {name}! Тебе {age} лет."</span>)`,output:`Привет, Саша! Тебе 15 лет.`},
+{title:'Арифметика',body:`<p style="margin-bottom:10px">Основные арифметические операции. Обратите внимание на <span class="bi">//</span> и <span class="bi">%</span>!</p>`,code:`<span class="fn">print</span>(<span class="nu">10</span> + <span class="nu">3</span>)   <span class="cm"># 13</span>\n<span class="fn">print</span>(<span class="nu">10</span> - <span class="nu">3</span>)   <span class="cm"># 7</span>\n<span class="fn">print</span>(<span class="nu">10</span> * <span class="nu">3</span>)   <span class="cm"># 30</span>\n<span class="fn">print</span>(<span class="nu">10</span> / <span class="nu">3</span>)   <span class="cm"># 3.333...</span>\n<span class="fn">print</span>(<span class="nu">10</span> // <span class="nu">3</span>)  <span class="cm"># 3 (целое)</span>\n<span class="fn">print</span>(<span class="nu">10</span> % <span class="nu">3</span>)   <span class="cm"># 1 (остаток)</span>\n<span class="fn">print</span>(<span class="nu">2</span> ** <span class="nu">8</span>)   <span class="cm"># 256 (степень)</span>`,output:`13\n7\n30\n3.3333333333333335\n3\n1\n256`}
+],
+quiz:[
+{q:'Что вернёт type(42)?',opts:['str','float','int','bool'],ans:2,explain:'42 — целое число без дробной части, его тип int'},
+{q:'Чему равно 10 // 3?',opts:['3.33','3','4','1'],ans:1,explain:'// — целочисленное деление: 10 ÷ 3 = 3 (остаток отбрасывается)'},
+{q:'Чему равно 2 ** 8?',opts:['16','64','256','512'],ans:2,explain:'** — степень: 2⁸ = 2×2×2×2×2×2×2×2 = 256'},
+{q:'Чему равно 10 % 3?',opts:['3','0','1','3.3'],ans:2,explain:'% — остаток от деления: 10 = 3×3 + 1, остаток равен 1'},
+{q:`Что выведет f"{'ab'*3}"?`,opts:['ab3','ababab','ab ab ab','ababababab'],ans:1,explain:"'ab'*3 повторяет строку три раза: 'ab'+'ab'+'ab' = 'ababab'"}
+],
+tasks:[
+{title:'Знакомство',desc:'Используйте f-строку. Должно получиться: <code style="color:#a78bfa">Привет, Саша! Мне 15 лет.</code>',starter:'name = "Саша"\nage = 15\n',expected:'Привет, Саша! Мне 15 лет.',inputs:[]},
+{title:'Целочисленное деление',desc:'Выведите результат <code style="color:#a78bfa">//</code> и остаток <code style="color:#a78bfa">%</code> (два числа на двух строках)',starter:'a = 17\nb = 5\n',expected:'3\n2',inputs:[]},
+{title:'Секунды → время',desc:'<code>seconds=3661</code>. Переведите в часы, минуты и секунды. Выведите: <code style="color:#a78bfa">1 ч 1 мин 1 сек</code>',starter:'seconds = 3661\n',expected:'1 ч 1 мин 1 сек',inputs:[]},
+{title:'Обмен переменных',desc:'<code>a=5</code>, <code>b=10</code>. Поменяйте значения местами и выведите <b>a</b> и <b>b</b> (два числа на двух строках)',starter:'a = 5\nb = 10\n',expected:'10\n5',inputs:[]},
+{title:'Тип переменной',desc:'Выведите типы: <code>42</code>, <code>3.14</code>, <code>"python"</code>, <code>True</code> — каждый на новой строке через <code>type()</code>',starter:'',expected:"<class 'int'>\n<class 'float'>\n<class 'str'>\n<class 'bool'>",inputs:[]},
+{title:'Площадь и периметр',desc:'<code>a=6</code>, <code>b=4</code>. Выведите площадь и периметр прямоугольника',starter:'a = 6\nb = 4\n',expected:'Площадь: 24\nПериметр: 20',inputs:[]},
+{title:'Цена со скидкой',desc:'<code>price=2000</code>, <code>discount_pct=15</code>. Посчитайте итоговую цену и выведите: <code style="color:#a78bfa">Цена со скидкой: 1700 руб.</code>',starter:'price = 2000\ndiscount_pct = 15\n',expected:'Цена со скидкой: 1700 руб.',inputs:[]}
+]},
+
+{id:'cond',num:3,emoji:'❓',title:'Условия',subtitle:'if, elif, else',hue:290,
+theory:[
+{title:'if / else',body:`<p style="margin-bottom:10px"><span class="kw">if</span> проверяет условие и запускает блок кода, если оно истинно. Не забывайте <span class="bi">двоеточие</span> и <span class="bi">отступы</span>!</p>`,code:`x = <span class="nu">10</span>\n<span class="kw">if</span> x > <span class="nu">0</span>:\n    <span class="fn">print</span>(<span class="st">"положительное"</span>)\n<span class="kw">else</span>:\n    <span class="fn">print</span>(<span class="st">"не положительное"</span>)`,output:`положительное`},
+{title:'elif',body:`<p style="margin-bottom:10px"><span class="kw">elif</span> — сокращение от "else if". Позволяет проверить несколько условий по очереди.</p>`,code:`x = <span class="nu">-5</span>\n<span class="kw">if</span> x > <span class="nu">0</span>:\n    <span class="fn">print</span>(<span class="st">"положительное"</span>)\n<span class="kw">elif</span> x < <span class="nu">0</span>:\n    <span class="fn">print</span>(<span class="st">"отрицательное"</span>)\n<span class="kw">else</span>:\n    <span class="fn">print</span>(<span class="st">"ноль"</span>)`,output:`отрицательное`},
+{title:'Операторы сравнения',body:`<p style="margin-bottom:10px">Важно: <span class="bi">==</span> — сравнение, <span class="bi">=</span> — присвоение!</p>`,code:`<span class="fn">print</span>(<span class="nu">5</span> == <span class="nu">5</span>)   <span class="cm"># True</span>\n<span class="fn">print</span>(<span class="nu">5</span> != <span class="nu">3</span>)   <span class="cm"># True</span>\n<span class="fn">print</span>(<span class="nu">5</span> > <span class="nu">3</span>)    <span class="cm"># True</span>\n<span class="fn">print</span>(<span class="nu">5</span> < <span class="nu">3</span>)    <span class="cm"># False</span>\n<span class="fn">print</span>(<span class="nu">5</span> >= <span class="nu">5</span>)   <span class="cm"># True</span>\n<span class="fn">print</span>(<span class="nu">5</span> <= <span class="nu">4</span>)   <span class="cm"># False</span>`,output:`True\nTrue\nTrue\nFalse\nTrue\nFalse`},
+{title:'Логические операторы',body:`<p style="margin-bottom:10px"><span class="kw">and</span> — оба истинны, <span class="kw">or</span> — хотя бы одно, <span class="kw">not</span> — отрицание.</p>`,code:`<span class="fn">print</span>(<span class="kw">True</span> <span class="kw">and</span> <span class="kw">False</span>)  <span class="cm"># False</span>\n<span class="fn">print</span>(<span class="kw">True</span> <span class="kw">or</span> <span class="kw">False</span>)   <span class="cm"># True</span>\n<span class="fn">print</span>(<span class="kw">not</span> <span class="kw">True</span>)         <span class="cm"># False</span>\n<span class="fn">print</span>(<span class="nu">5</span> > <span class="nu">3</span> <span class="kw">and</span> <span class="nu">2</span> < <span class="nu">4</span>) <span class="cm"># True</span>`,output:`False\nTrue\nFalse\nTrue`}
+],
+quiz:[
+{q:'Что выведет: 5>3 and 2<4?',opts:['True','False','Error','None'],ans:0,explain:'5>3 → True, 2<4 → True; оба истинны, и and даёт True'},
+{q:'Что выведет: not True?',opts:['True','False','None','1'],ans:1,explain:'not инвертирует значение: not True → False'},
+{q:'Что означает 10%2==0?',opts:['нечётное число','чётное число','ошибку','деление'],ans:1,explain:'остаток от деления на 2 равен 0 — значит, число делится на 2 нацело, то есть чётное'},
+{q:'Что не так: if x=5:',opts:['всё ок','= вместо ==','нет двоеточия','нет отступа'],ans:1,explain:'= — присвоение переменной, == — сравнение; в условии нужен =='},
+{q:'Что вернёт: "да" if 5>3 else "нет"?',opts:['нет','да','True','ошибка'],ans:1,explain:'5>3 — True, поэтому берётся первое значение "да"'}
+],
+tasks:[
+{title:'Знак числа',desc:'<code style="color:#a78bfa">x=7</code>. Выведите <code style="color:#a78bfa">положительное</code>, <code style="color:#a78bfa">отрицательное</code> или <code style="color:#a78bfa">ноль</code>',starter:'x = 7\n',expected:'положительное',inputs:[]},
+{title:'Чётное?',desc:'<code style="color:#a78bfa">n=15</code>. Выведите <code style="color:#a78bfa">чётное</code> или <code style="color:#a78bfa">нечётное</code>',starter:'n = 15\n',expected:'нечётное',inputs:[]},
+{title:'Оценка',desc:'<code style="color:#a78bfa">grade=4</code>. 5→Отлично, 4→Хорошо, 3→Норм, иначе→Плохо',starter:'grade = 4\n',expected:'Хорошо',inputs:[]},
+{title:'Високосный год',desc:'<code>year=2024</code>. Высокосный если делится на 4, но не на 100 (или делится на 400). Выведите <b>Високосный</b> или <b>Не високосный</b>',starter:'year = 2024\n',expected:'Високосный',inputs:[]},
+{title:'Треугольник',desc:'<code>a=3</code>, <code>b=4</code>, <code>c=5</code>. Выведите <b>Можно построить</b> если сумма любых двух сторон больше третьей, иначе <b>Нельзя построить</b>',starter:'a = 3\nb = 4\nc = 5\n',expected:'Можно построить',inputs:[]},
+{title:'Категория возраста',desc:'<code>age=15</code>. Выведите: до 12 → <b>Ребёнок</b>, 12–17 → <b>Подросток</b>, 18–64 → <b>Взрослый</b>, 65+ → <b>Пенсионер</b>',starter:'age = 15\n',expected:'Подросток',inputs:[]},
+{title:'FizzBuzz одного числа',desc:'<code>n=15</code>. Если делится на 3 и 5 → <b>FizzBuzz</b>, на 3 → <b>Fizz</b>, на 5 → <b>Buzz</b>, иначе → само число',starter:'n = 15\n',expected:'FizzBuzz',inputs:[]}
+]},
+
+{id:'loops',num:4,emoji:'🔄',title:'Циклы',subtitle:'for, while, break, continue',hue:30,
+theory:[
+{title:'for + range()',body:`<p style="margin-bottom:10px"><span class="bi">range(stop)</span>, <span class="bi">range(start, stop)</span>, <span class="bi">range(start, stop, step)</span></p>`,code:`<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">5</span>):\n    <span class="fn">print</span>(i, end=<span class="st">" "</span>)\n<span class="fn">print</span>()\n<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">1</span>, <span class="nu">10</span>, <span class="nu">2</span>):\n    <span class="fn">print</span>(i, end=<span class="st">" "</span>)`,output:`0 1 2 3 4 \n1 3 5 7 9 `},
+{title:'for по коллекции',body:`<p style="margin-bottom:10px">Можно перебирать любой список, строку или другую коллекцию.</p>`,code:`fruits = [<span class="st">"яблоко"</span>, <span class="st">"банан"</span>, <span class="st">"вишня"</span>]\n<span class="kw">for</span> fruit <span class="kw">in</span> fruits:\n    <span class="fn">print</span>(fruit)`,output:`яблоко\nбанан\nвишня`},
+{title:'while',body:`<p style="margin-bottom:10px"><span class="kw">while</span> выполняет тело цикла, пока условие истинно. Осторожно с бесконечным циклом!</p>`,code:`x = <span class="nu">5</span>\n<span class="kw">while</span> x > <span class="nu">0</span>:\n    <span class="fn">print</span>(x, end=<span class="st">" "</span>)\n    x -= <span class="nu">1</span>`,output:`5 4 3 2 1 `},
+{title:'break и continue',body:`<p style="margin-bottom:10px"><span class="kw">break</span> — полностью выходит из цикла. <span class="kw">continue</span> — пропускает текущую итерацию.</p>`,code:`<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">10</span>):\n    <span class="kw">if</span> i == <span class="nu">3</span>: <span class="kw">continue</span>  <span class="cm"># пропуск</span>\n    <span class="kw">if</span> i == <span class="nu">6</span>: <span class="kw">break</span>    <span class="cm"># стоп</span>\n    <span class="fn">print</span>(i, end=<span class="st">" "</span>)`,output:`0 1 2 4 5 `}
+],
+quiz:[
+{q:'Что даёт range(5)?',opts:['1 2 3 4 5','0 1 2 3 4','0 1 2 3 4 5','1 2 3 4'],ans:1,explain:'range(n) даёт числа от 0 до n-1 включительно: 0,1,2,3,4'},
+{q:'Сколько итераций у range(1,10,2)?',opts:['4','5','9','10'],ans:1,explain:'range(1,10,2) → 1,3,5,7,9 — это ровно 5 чисел'},
+{q:'Что делает continue в цикле?',opts:['выходит из цикла','прерывает программу','пропускает итерацию','ничего'],ans:2,explain:'continue пропускает оставшийся код текущей итерации и переходит к следующей'},
+{q:'Что даёт range(5,0,-1)?',opts:['5 4 3 2 1','4 3 2 1 0','0 1 2 3 4','ошибку'],ans:0,explain:'шаг -1 и начало 5: считаем вниз 5,4,3,2,1 (до 0, не включая)'},
+{q:'Сколько раз выполнится: while True: break?',opts:['0 раз','1 раз','бесконечно','ошибка'],ans:1,explain:'break немедленно выходит из цикла — тело выполнится ровно один раз'}
+],
+tasks:[
+{title:'От 1 до 5',desc:'Выведите числа от 1 до 5, каждое на новой строке',starter:'',expected:'1\n2\n3\n4\n5',inputs:[]},
+{title:'Сумма 1..10',desc:'Найдите и выведите сумму чисел от 1 до 10',starter:'',expected:'55',inputs:[]},
+{title:'Пирамида звёздочек',desc:'Выведите 5 строк: *, **, ***, ****, *****',starter:'',expected:'*\n**\n***\n****\n*****',inputs:[]},
+{title:'FizzBuzz 1–20',desc:'Выведите числа от 1 до 20. Кратные 3 → <b>Fizz</b>, кратные 5 → <b>Buzz</b>, кратные обоим → <b>FizzBuzz</b>',starter:'',expected:'1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz\n16\n17\nFizz\n19\nBuzz',inputs:[]},
+{title:'Числа Фибоначчи',desc:'Выведите первые 8 чисел Фибоначчи (каждое на новой строке)',starter:'',expected:'0\n1\n1\n2\n3\n5\n8\n13',inputs:[]},
+{title:'Факториал',desc:'<code>n=6</code>. Вычислите факториал (6! = 720) без встроенных функций',starter:'n = 6\n',expected:'720',inputs:[]},
+{title:'Простые числа',desc:'Выведите все простые числа от 2 до 30, каждое на новой строке',starter:'',expected:'2\n3\n5\n7\n11\n13\n17\n19\n23\n29',inputs:[]}
+]},
+
+{id:'lists',num:5,emoji:'📋',title:'Списки',subtitle:'Массивы, срезы, методы',hue:140,
+theory:[
+{title:'Создание и индексы',body:`<p style="margin-bottom:10px">Список — упорядоченная коллекция. Индексы начинаются с 0. Отрицательные идут с конца.</p>`,code:`lst = [<span class="nu">10</span>, <span class="nu">20</span>, <span class="nu">30</span>, <span class="nu">40</span>]\n<span class="fn">print</span>(lst[<span class="nu">0</span>])    <span class="cm"># 10</span>\n<span class="fn">print</span>(lst[-<span class="nu">1</span>])   <span class="cm"># 40</span>\n<span class="fn">print</span>(<span class="fn">len</span>(lst))  <span class="cm"># 4</span>`,output:`10\n40\n4`},
+{title:'Методы списка',body:`<p style="margin-bottom:10px">Вот самые нужные методы:</p>`,code:`lst = [<span class="nu">3</span>, <span class="nu">1</span>, <span class="nu">4</span>, <span class="nu">1</span>, <span class="nu">5</span>]\nlst.append(<span class="nu">9</span>)    <span class="cm"># [3,1,4,1,5,9]</span>\nlst.remove(<span class="nu">1</span>)    <span class="cm"># [3,4,1,5,9]</span>\nlst.sort()        <span class="cm"># [1,3,4,5,9]</span>\nlst.reverse()     <span class="cm"># [9,5,4,3,1]</span>\n<span class="fn">print</span>(lst)`,output:`[9, 5, 4, 3, 1]`},
+{title:'Срезы',body:`<p style="margin-bottom:10px">Срез <span class="bi">[start:stop:step]</span> возвращает часть списка.</p>`,code:`lst = [<span class="nu">0</span>, <span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>, <span class="nu">4</span>, <span class="nu">5</span>]\n<span class="fn">print</span>(lst[<span class="nu">1</span>:<span class="nu">4</span>])   <span class="cm"># [1, 2, 3]</span>\n<span class="fn">print</span>(lst[::<span class="nu">2</span>])   <span class="cm"># [0, 2, 4]</span>\n<span class="fn">print</span>(lst[::-<span class="nu">1</span>])  <span class="cm"># [5, 4, 3, 2, 1, 0]</span>`,output:`[1, 2, 3]\n[0, 2, 4]\n[5, 4, 3, 2, 1, 0]`},
+{title:'Перебор',body:`<p style="margin-bottom:10px"><span class="fn">enumerate</span>() даёт индекс и значение. List comprehension — краткий способ создать список.</p>`,code:`lst = [<span class="st">"а"</span>, <span class="st">"б"</span>, <span class="st">"в"</span>]\n<span class="kw">for</span> i, x <span class="kw">in</span> <span class="fn">enumerate</span>(lst):\n    <span class="fn">print</span>(i, x)\nsquares = [x**<span class="nu">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">5</span>)]\n<span class="fn">print</span>(squares)`,output:`0 а\n1 б\n2 в\n[0, 1, 4, 9, 16]`}
+],
+quiz:[
+{q:'Что вернёт [1,2,3][-1]?',opts:['1','2','3','ошибка'],ans:2,explain:'отрицательный индекс считает с конца: -1 — это последний элемент (3)'},
+{q:'lst=[3,1,2]; lst.sort() → lst?',opts:['[3,1,2]','[1,2,3]','(1,2,3)','{1,2,3}'],ans:1,explain:'sort() сортирует список по возрастанию прямо на месте'},
+{q:'Что такое [1,2,3,4][1:3]?',opts:['[1,2]','[2,3]','[2,3,4]','[1,2,3]'],ans:1,explain:'срез [1:3] берёт элементы с индекса 1 включительно до 3 не включая: [2,3]'},
+{q:'len([0]*5) = ?',opts:['0','1','5','ошибка'],ans:2,explain:'[0]*5 создаёт список из пяти нулей [0,0,0,0,0], его длина 5'},
+{q:'[1,2,3][::-1] = ?',opts:['[3,2,1]','[1,2,3]','[2,3]','ошибка'],ans:0,explain:'срез [::-1] с шагом -1 разворачивает список задом наперёд'}
+],
+tasks:[
+{title:'Максимум',desc:'Найдите максимальный элемент без функции <code style="color:#a78bfa">max()</code>',starter:'lst = [5, 2, 8, 1, 9, 3]\n',expected:'9',inputs:[]},
+{title:'Квадраты',desc:'Создайте список квадратов чисел 1-5 и выведите его',starter:'',expected:'[1, 4, 9, 16, 25]',inputs:[]},
+{title:'Фильтр чётных',desc:'Выведите список только чётных чисел из lst',starter:'lst = [1, 2, 3, 4, 5, 6, 7, 8]\n',expected:'[2, 4, 6, 8]',inputs:[]},
+{title:'Уникальные без set',desc:'<code>lst=[3,1,2,1,3,4,2]</code>. Создайте список уникальных элементов, сохранив порядок первого появления',starter:'lst = [3, 1, 2, 1, 3, 4, 2]\n',expected:'[3, 1, 2, 4]',inputs:[]},
+{title:'Сумма вложенного',desc:'<code>matrix=[[1,2,3],[4,5,6],[7,8,9]]</code>. Выведите сумму всех элементов',starter:'matrix = [[1,2,3],[4,5,6],[7,8,9]]\n',expected:'45',inputs:[]},
+{title:'Разворот без слайса',desc:'<code>lst=[1,2,3,4,5]</code>. Разверните список вручную (через цикл, не через [::-1] или reverse())',starter:'lst = [1, 2, 3, 4, 5]\n',expected:'[5, 4, 3, 2, 1]',inputs:[]},
+{title:'Слияние списков',desc:'<code>a=[1,3,5]</code>, <code>b=[2,4,6]</code>. Создайте новый список, чередуя элементы: <b>[1,2,3,4,5,6]</b>',starter:'a = [1, 3, 5]\nb = [2, 4, 6]\n',expected:'[1, 2, 3, 4, 5, 6]',inputs:[]}
+]},
+
+{id:'strings',num:6,emoji:'📝',title:'Строки',subtitle:'Методы, срезы, форматирование',hue:170,
+theory:[
+{title:'Основы строк',body:`<p style="margin-bottom:10px">Строки работают как последовательности символов. Можно брать срезы и перебирать в цикле.</p>`,code:`s = <span class="st">"Python"</span>\n<span class="fn">print</span>(<span class="fn">len</span>(s))     <span class="cm"># 6</span>\n<span class="fn">print</span>(s[<span class="nu">0</span>])      <span class="cm"># P</span>\n<span class="fn">print</span>(s[<span class="nu">1</span>:<span class="nu">4</span>])    <span class="cm"># yth</span>\n<span class="fn">print</span>(s[::-<span class="nu">1</span>])   <span class="cm"># nohtyP</span>`,output:`6\nP\nyth\nnohtyP`},
+{title:'Методы строк',body:`<p style="margin-bottom:10px">Строки неизменяемы — каждый метод возвращает новую строку, а не меняет исходную.</p>`,code:`s = <span class="st">"  Hello, World!  "</span>\n<span class="fn">print</span>(s.upper())          <span class="cm"># HELLO, WORLD!</span>\n<span class="fn">print</span>(s.lower())          <span class="cm"># hello, world!</span>\n<span class="fn">print</span>(s.strip())          <span class="cm"># Hello, World!</span>\n<span class="fn">print</span>(s.replace(<span class="st">"o"</span>,<span class="st">"0"</span>)) <span class="cm"># Hell0, W0rld!</span>\n<span class="fn">print</span>(s.count(<span class="st">"l"</span>))       <span class="cm"># 3</span>`,output:`  HELLO, WORLD!  \n  hello, world!  \nHello, World!\n  Hell0, W0rld!  \n3`},
+{title:'split и join',body:`<p style="margin-bottom:10px"><span class="fn">split</span>() делит строку на список. <span class="fn">join</span>() склеивает список в строку.</p>`,code:`s = <span class="st">"яблоко,банан,вишня"</span>\nparts = s.split(<span class="st">","</span>)\n<span class="fn">print</span>(parts)\nresult = <span class="st">" | "</span>.join(parts)\n<span class="fn">print</span>(result)`,output:`['яблоко', 'банан', 'вишня']\nяблоко | банан | вишня`},
+{title:'in и форматирование',body:`<p style="margin-bottom:10px">Оператор <span class="kw">in</span> проверяет вхождение подстроки. f-строки удобнее всего для вставки переменных в строку.</p>`,code:`<span class="fn">print</span>(<span class="st">"py"</span> <span class="kw">in</span> <span class="st">"python"</span>)  <span class="cm"># True</span>\n<span class="fn">print</span>(<span class="st">"ha"</span> * <span class="nu">3</span>)            <span class="cm"># hahaha</span>\nname = <span class="st">"Саша"</span>\n<span class="fn">print</span>(<span class="st">f"Привет, {name.upper()}!"</span>)`,output:`True\nhahaha\nПривет, САША!`}
+],
+quiz:[
+{q:'"hello".upper() = ?',opts:['hello','HELLO','Hello','ошибка'],ans:1,explain:'upper() переводит все символы строки в верхний регистр'},
+{q:'"  текст  ".strip() = ?',opts:['  текст  ','текст','текст  ','  текст'],ans:1,explain:'strip() убирает пробелы (и другие пробельные символы) по обоим краям строки'},
+{q:'"a,b,c".split(",") = ?',opts:['["a,b,c"]','["a","b","c"]','("a","b","c")','{"a","b","c"}'],ans:1,explain:'split(",") разбивает строку по запятой и возвращает список строк'},
+{q:'"python"[::-1] = ?',opts:['python','nohtyp','pytho','PYTHON'],ans:1,explain:'срез [::-1] разворачивает строку: "python" → "nohtyp"'},
+{q:'"ha"*3 = ?',opts:['ha3','ha ha ha','hahaha','ошибка'],ans:2,explain:'"ha"*3 повторяет строку три раза: "ha"+"ha"+"ha" = "hahaha"'}
+],
+tasks:[
+{title:'ВЕРХНИЙ РЕГИСТР',desc:'Выведите строку в верхнем регистре',starter:'s = "Привет, мир!"\n',expected:'ПРИВЕТ, МИР!',inputs:[]},
+{title:'Задом наперёд',desc:'Выведите строку задом наперёд',starter:'s = "python"\n',expected:'nohtyp',inputs:[]},
+{title:'Соединить слова',desc:'Соедините слова через "-" и выведите',starter:'words = ["кот", "пёс", "рыба"]\n',expected:'кот-пёс-рыба',inputs:[]},
+{title:'Палиндром',desc:'<code>s="racecar"</code>. Выведите <b>Палиндром</b> если строка одинаково читается слева и справа, иначе <b>Не палиндром</b>',starter:'s = "racecar"\n',expected:'Палиндром',inputs:[]},
+{title:'Подсчёт гласных',desc:'<code>s="Hello, World!"</code>. Подсчитайте количество гласных букв (a,e,i,o,u — регистр не важен)',starter:'s = "Hello, World!"\n',expected:'3',inputs:[]},
+{title:'Замена пробелов',desc:'<code>s="python is awesome"</code>. Замените пробелы на дефисы и выведите в верхнем регистре',starter:'s = "python is awesome"\n',expected:'PYTHON-IS-AWESOME',inputs:[]},
+{title:'Первые буквы',desc:'<code>s="добрый вечер всем"</code>. Выведите первую букву каждого слова с заглавной, через пробел',starter:'s = "добрый вечер всем"\n',expected:'Д В В',inputs:[]}
+]},
+
+{id:'funcs',num:7,emoji:'🔧',title:'Функции',subtitle:'def, return, аргументы',hue:340,
+theory:[
+{title:'def и return',body:`<p style="margin-bottom:10px">Функция — это блок кода с именем. <span class="kw">def</span> объявляет функцию, <span class="kw">return</span> возвращает результат.</p>`,code:`<span class="kw">def</span> <span class="fn">add</span>(a, b):\n    <span class="kw">return</span> a + b\n\nresult = <span class="fn">add</span>(<span class="nu">2</span>, <span class="nu">3</span>)\n<span class="fn">print</span>(result)`,output:`5`},
+{title:'Аргументы по умолчанию',body:`<p style="margin-bottom:10px">Параметры могут иметь значения по умолчанию — тогда их можно не передавать при вызове.</p>`,code:`<span class="kw">def</span> <span class="fn">greet</span>(name=<span class="st">"мир"</span>):\n    <span class="fn">print</span>(<span class="st">f"Привет, {name}!"</span>)\n\n<span class="fn">greet</span>()         <span class="cm"># Привет, мир!</span>\n<span class="fn">greet</span>(<span class="st">"Саша"</span>)  <span class="cm"># Привет, Саша!</span>`,output:`Привет, мир!\nПривет, Саша!`},
+{title:'Несколько return',body:`<p style="margin-bottom:10px">Функция может завершиться раньше через ранний <span class="kw">return</span>.</p>`,code:`<span class="kw">def</span> <span class="fn">divide</span>(a, b):\n    <span class="kw">if</span> b == <span class="nu">0</span>:\n        <span class="kw">return</span> <span class="st">"нельзя делить на 0"</span>\n    <span class="kw">return</span> a / b\n\n<span class="fn">print</span>(<span class="fn">divide</span>(<span class="nu">10</span>, <span class="nu">2</span>))\n<span class="fn">print</span>(<span class="fn">divide</span>(<span class="nu">10</span>, <span class="nu">0</span>))`,output:`5.0\nнельзя делить на 0`},
+{title:'Зачем функции?',body:`<p style="margin-bottom:10px">Принцип DRY — Don't Repeat Yourself. Функции делают код читаемым и позволяют писать код один раз и вызывать его много раз.</p>`,code:`<span class="cm"># Без функции — повторение!</span>\n<span class="fn">print</span>(<span class="st">"Привет, Саша! Рад тебя видеть!"</span>)\n<span class="fn">print</span>(<span class="st">"Привет, Аня! Рад тебя видеть!"</span>)\n\n<span class="cm"># С функцией — чисто!</span>\n<span class="kw">def</span> <span class="fn">welcome</span>(name):\n    <span class="fn">print</span>(<span class="st">f"Привет, {name}! Рад тебя видеть!"</span>)\n\n<span class="fn">welcome</span>(<span class="st">"Саша"</span>)\n<span class="fn">welcome</span>(<span class="st">"Аня"</span>)`,output:`Привет, Саша! Рад тебя видеть!\nПривет, Аня! Рад тебя видеть!\nПривет, Саша! Рад тебя видеть!\nПривет, Аня! Рад тебя видеть!`}
+],
+quiz:[
+{q:'def f(x): return x*2; f(5) = ?',opts:['5','10','2','ошибка'],ans:1,explain:'f(5): x=5, возвращает 5×2 = 10'},
+{q:'def g(a=1,b=2): return a+b; g(3) = ?',opts:['3','5','6','ошибка'],ans:1,explain:'g(3): a=3 (передали явно), b=2 (по умолчанию); 3+2 = 5'},
+{q:'Что возвращает функция без return?',opts:['0','False','None','ошибка'],ans:2,explain:'если return не написан, Python автоматически возвращает None — специальное значение «ничего»'},
+{q:'def sq(x): return x**2; sq(4) = ?',opts:['8','12','16','4'],ans:2,explain:'sq(4): x=4, возвращает 4**2 = 16'},
+{q:'Можно ли вызвать функцию до её определения?',opts:['да','нет','зависит','да, если в if'],ans:1,explain:'Python читает код сверху вниз: def должен стоять выше вызова функции'}
+],
+tasks:[
+{title:'Квадрат числа',desc:'Функция <code style="color:#a78bfa">square(n)</code> — возвращает квадрат числа. Выведите <code style="color:#a78bfa">square(7)</code>',starter:'print(square(7))\n',expected:'49',inputs:[]},
+{title:'Чётное?',desc:'Функция <code style="color:#a78bfa">is_even(n)</code> → True/False. Выведите <code style="color:#a78bfa">is_even(4)</code> и <code style="color:#a78bfa">is_even(7)</code>',starter:'print(is_even(4))\nprint(is_even(7))\n',expected:'True\nFalse',inputs:[]},
+{title:'Максимум трёх',desc:'Функция <code style="color:#a78bfa">max3(a,b,c)</code> → наибольшее. Выведите <code style="color:#a78bfa">max3(5,2,8)</code>',starter:'print(max3(5, 2, 8))\n',expected:'8',inputs:[]},
+{title:'Степень без **',desc:'Напишите функцию <code>power(base, exp)</code> — возводит в степень через цикл умножения. Выведите <code>power(2, 10)</code>',starter:'print(power(2, 10))\n',expected:'1024',inputs:[]},
+{title:'Сумма цифр',desc:'Напишите функцию <code>digit_sum(n)</code> — возвращает сумму цифр числа. Выведите <code>digit_sum(12345)</code>',starter:'print(digit_sum(12345))\n',expected:'15',inputs:[]},
+{title:'Перевод температур',desc:'Функция <code>c_to_f(c)</code>: Цельсий → Фаренгейт (формула: F = C * 9/5 + 32). Выведите результат для 0, 100 и 37',starter:'print(c_to_f(0))\nprint(c_to_f(100))\nprint(c_to_f(37))\n',expected:'32.0\n212.0\n98.6',inputs:[]},
+{title:'Рекурсия: факториал',desc:'Напишите <b>рекурсивную</b> функцию <code>factorial(n)</code>. Выведите <code>factorial(7)</code>',starter:'print(factorial(7))\n',expected:'5040',inputs:[]}
+]},
+
+{id:'tryexcept',num:8,emoji:'🛡️',title:'try / except',subtitle:'Обработка ошибок',hue:45,
+theory:[
+{title:'try / except',body:`<p style="margin-bottom:10px">Блок <span class="kw">try</span> пробует выполнить код. Если возникает ошибка — срабатывает <span class="kw">except</span>.</p>`,code:`<span class="kw">try</span>:\n    x = <span class="kw">int</span>(<span class="st">"abc"</span>)\nexcept <span class="bi">ValueError</span>:\n    <span class="fn">print</span>(<span class="st">"Ошибка: не число!"</span>)\n\n<span class="kw">try</span>:\n    result = <span class="nu">10</span> / <span class="nu">0</span>\nexcept <span class="bi">ZeroDivisionError</span>:\n    <span class="fn">print</span>(<span class="st">"Нельзя делить на 0!"</span>)`,output:`Ошибка: не число!\nНельзя делить на 0!`},
+{title:'except as e',body:`<p style="margin-bottom:10px">Можно получить текст ошибки через <span class="bi">as e</span>.</p>`,code:`<span class="kw">try</span>:\n    x = <span class="kw">int</span>(<span class="st">"hello"</span>)\nexcept <span class="bi">ValueError</span> <span class="kw">as</span> e:\n    <span class="fn">print</span>(<span class="st">f"Поймана ошибка: {e}"</span>)`,output:`Поймана ошибка: invalid literal for int() with base 10: 'hello'`},
+{title:'finally',body:`<p style="margin-bottom:10px"><span class="kw">finally</span> выполняется <b>всегда</b> — есть ошибка или нет. Удобно для закрытия файлов и т.д.</p>`,code:`<span class="kw">try</span>:\n    result = <span class="nu">10</span> / <span class="nu">2</span>\n    <span class="fn">print</span>(<span class="st">f"Результат: {result}"</span>)\nexcept <span class="bi">ZeroDivisionError</span>:\n    <span class="fn">print</span>(<span class="st">"Ошибка деления!"</span>)\n<span class="kw">finally</span>:\n    <span class="fn">print</span>(<span class="st">"Конец вычислений"</span>)`,output:`Результат: 5.0\nКонец вычислений`}
+],
+quiz:[
+{q:'try: int("abc") except ValueError: print("ошибка") → ?',opts:['abc','ошибка','None','Exception'],ans:1,explain:'int("abc") вызывает ValueError, except его ловит и выводит "ошибка"'},
+{q:'Что НЕ поймает try/except?',opts:['ValueError','ZeroDivisionError','SyntaxError','TypeError'],ans:2,explain:'SyntaxError возникает при чтении кода ещё до его запуска — try/except его не перехватит'},
+{q:'finally выполняется...',opts:['только при ошибке','только без ошибки','всегда','никогда'],ans:2,explain:'finally запускается в любом случае — и когда ошибка была, и когда нет'},
+{q:'int("3.14") вызовет...',opts:['TypeError','FloatError','ValueError','SyntaxError'],ans:2,explain:'"3.14" содержит точку — int() не умеет с этим работать и выбрасывает ValueError'},
+{q:'Зачем нужен try/except?',opts:['ускорить код','избежать падения программы','удалить ошибки','отладить'],ans:1,explain:'try/except перехватывает ошибку и позволяет программе продолжить работу вместо аварийного завершения'}
+],
+tasks:[
+{title:'Не число',desc:'Попробуйте <code style="color:#a78bfa">int("abc")</code>, поймайте <code style="color:#a78bfa">ValueError</code>, выведите <code style="color:#a78bfa">Не число</code>',starter:'',expected:'Не число',inputs:[]},
+{title:'Безопасное деление',desc:'Функция <code style="color:#a78bfa">safe_div(a,b)</code>. При b=0 → <code style="color:#a78bfa">Нельзя делить на 0</code>',starter:'print(safe_div(10, 2))\nprint(safe_div(10, 0))\n',expected:'5.0\nНельзя делить на 0',inputs:[]},
+{title:'Фильтр чисел',desc:'Конвертируйте в int, пропускайте ошибки, выводите числа',starter:'nums = ["1", "abc", "3", "!"]\n',expected:'1\n3',inputs:[]},
+{title:'Валидация возраста',desc:'<code>inputs=["abc", "-5", "17", "200", "15"]</code>. Для каждого: попробуйте конвертировать в int. Если не число → <b>Не число</b>, если <0 или >120 → <b>Некорректный возраст</b>, иначе → <b>OK: {число}</b>',starter:'inputs = ["abc", "-5", "17", "200", "15"]\n',expected:'Не число\nНекорректный возраст\nOK: 17\nНекорректный возраст\nOK: 15',inputs:[]},
+{title:'Безопасный список',desc:'<code>lst=[10,20,30]</code>, индексы для доступа: <code>[0,5,2,10,1]</code>. Для каждого: выведите элемент или <b>Нет такого индекса</b>',starter:'lst = [10, 20, 30]\nindexes = [0, 5, 2, 10, 1]\n',expected:'10\nНет такого индекса\n30\nНет такого индекса\n20',inputs:[]},
+{title:'Конвертер типов',desc:'<code>values=["42", "3.14", "True", "abc", "0"]</code>. Попробуйте int → float → bool. Выведите тип и значение, или <b>Не удалось</b>',starter:'values = ["42", "3.14", "True", "abc", "0"]\n',expected:'int: 42\nfloat: 3.14\nНе удалось\nНе удалось\nint: 0',inputs:[]},
+{title:'Цепочка исключений',desc:'Функция <code>process(s)</code>: делит 100 на int(s). Поймайте и <code>ValueError</code> (→ <b>Не число</b>) и <code>ZeroDivisionError</code> (→ <b>Деление на ноль</b>). Выведите для <code>"4"</code>, <code>"0"</code>, <code>"abc"</code>',starter:'print(process("4"))\nprint(process("0"))\nprint(process("abc"))\n',expected:'25.0\nДеление на ноль\nНе число',inputs:[]}
+]},
+
+{id:'dicts',num:9,emoji:'📚',title:'Словари',subtitle:'Ключи, значения, методы',hue:270,
+theory:[
+{title:'Создание словаря',body:`<p style="margin-bottom:10px">Словарь хранит пары <span class="bi">ключ: значение</span>. Ключи должны быть уникальными.</p>`,code:`d = {<span class="st">"имя"</span>: <span class="st">"Саша"</span>, <span class="st">"возраст"</span>: <span class="nu">15</span>}\nd[<span class="st">"город"</span>] = <span class="st">"Москва"</span>  <span class="cm"># добавить</span>\n<span class="kw">del</span> d[<span class="st">"город"</span>]          <span class="cm"># удалить</span>\n<span class="fn">print</span>(d)`,output:`{'имя': 'Саша', 'возраст': 15}`},
+{title:'Безопасное чтение',body:`<p style="margin-bottom:10px"><span class="bi">d[key]</span> вызывает KeyError если ключ не найден. <span class="bi">d.get(key, default)</span> — безопасный способ.</p>`,code:`d = {<span class="st">"a"</span>: <span class="nu">1</span>}\n<span class="fn">print</span>(d.get(<span class="st">"a"</span>, <span class="nu">0</span>))  <span class="cm"># 1 — найден</span>\n<span class="fn">print</span>(d.get(<span class="st">"z"</span>, <span class="nu">0</span>))  <span class="cm"># 0 — нет ключа</span>`,output:`1\n0`},
+{title:'Методы',body:`<p style="margin-bottom:10px"><span class="bi">keys()</span>, <span class="bi">values()</span>, <span class="bi">items()</span> — перебор словаря.</p>`,code:`d = {<span class="st">"a"</span>: <span class="nu">1</span>, <span class="st">"b"</span>: <span class="nu">2</span>, <span class="st">"c"</span>: <span class="nu">3</span>}\n<span class="fn">print</span>(<span class="fn">list</span>(d.keys()))    <span class="cm"># ['a','b','c']</span>\n<span class="fn">print</span>(<span class="fn">list</span>(d.values()))  <span class="cm"># [1, 2, 3]</span>\n<span class="kw">for</span> k, v <span class="kw">in</span> d.items():\n    <span class="fn">print</span>(<span class="st">f"{k}: {v}"</span>)`,output:`['a', 'b', 'c']\n[1, 2, 3]\na: 1\nb: 2\nc: 3`},
+{title:'Паттерн счётчика',body:`<p style="margin-bottom:10px">Часто используют словарь для подсчёта повторений.</p>`,code:`text = <span class="st">"banana"</span>\ncounts = {}\n<span class="kw">for</span> ch <span class="kw">in</span> text:\n    counts[ch] = counts.get(ch, <span class="nu">0</span>) + <span class="nu">1</span>\n<span class="fn">print</span>(counts)`,output:`{'b': 1, 'a': 3, 'n': 2}`}
+],
+quiz:[
+{q:'d={}; d["a"]=1; d["a"]=2; d["a"] → ?',opts:['1','2','[1,2]','ошибка'],ans:1,explain:'каждый ключ в словаре уникален: второе присвоение перезаписывает первое'},
+{q:'d.get("z", 0) когда "z" нет → ?',opts:['None','KeyError','0','False'],ans:2,explain:'get(key, default) возвращает default, если ключ не найден — в отличие от d[key], который бросает KeyError'},
+{q:'for k,v in d.items() перебирает...',opts:['только ключи','только значения','пары ключ-значение','индексы'],ans:2,explain:'items() возвращает пары (ключ, значение), поэтому удобно распаковывать в k, v'},
+{q:'list({"a":1,"b":2}.keys()) → ?',opts:['[1,2]','["a","b"]','("a","b")','{"a","b"}'],ans:1,explain:'keys() возвращает все ключи словаря; list() превращает их в список'},
+{q:'d[w]=d.get(w,0)+1 — это...',opts:['удаление ключа','поиск значения','паттерн счётчика','сортировка'],ans:2,explain:'берём текущее значение (или 0, если ключа нет) и прибавляем 1 — классический подсчёт повторений'}
+],
+tasks:[
+{title:'Сумма цен',desc:'Найдите и выведите сумму всех цен в словаре',starter:'prices = {"сок": 100, "чай": 50, "вода": 30}\n',expected:'180',inputs:[]},
+{title:'Счётчик букв',desc:'Подсчитайте буквы в слове "banana". Выведите словарь',starter:'word = "banana"\n',expected:"{'b': 1, 'a': 3, 'n': 2}",inputs:[]},
+{title:'Инверсия словаря',desc:'Переверните словарь: ключи↔значения',starter:'original = {"a": "x", "b": "y", "c": "z"}\n',expected:"{'x': 'a', 'y': 'b', 'z': 'c'}",inputs:[]},
+{title:'Топ-3',desc:'<code>scores={"Аня":95,"Борис":72,"Вера":88,"Гриша":61,"Дима":90}</code>. Выведите трёх лучших в формате <b>Имя: балл</b> (по убыванию)',starter:'scores = {"Аня":95,"Борис":72,"Вера":88,"Гриша":61,"Дима":90}\n',expected:'Аня: 95\nДима: 90\nВера: 88',inputs:[]},
+{title:'Группировка по длине',desc:'<code>words=["кот","пёс","слон","лев","тигр","ёж"]</code>. Сгруппируйте слова по длине в словарь <code>{длина: [слова]}</code>. Выведите отсортированно по ключу',starter:'words = ["кот","пёс","слон","лев","тигр","ёж"]\n',expected:"2 ['ёж']\n3 ['кот', 'пёс', 'лев']\n4 ['слон', 'тигр']",inputs:[]},
+{title:'Объединение словарей',desc:'<code>d1={"a":1,"b":2}</code>, <code>d2={"b":10,"c":3}</code>. Объедините: при конфликте ключей берётся значение из <code>d2</code>. Выведите результат.',starter:'d1 = {"a": 1, "b": 2}\nd2 = {"b": 10, "c": 3}\n',expected:"{'a': 1, 'b': 10, 'c': 3}",inputs:[]},
+{title:'Анаграммы',desc:'Функция <code>is_anagram(s1, s2)</code> проверяет, являются ли строки анаграммами (одинаковые буквы, разный порядок). Выведите для пар: <code>("listen","silent")</code> и <code>("hello","world")</code>',starter:'print(is_anagram("listen", "silent"))\nprint(is_anagram("hello", "world"))\n',expected:'True\nFalse',inputs:[]}
+]},
+
+{id:'tuples',num:10,emoji:'🔒',title:'Кортежи',subtitle:'Неизменяемые последовательности',hue:195,
+theory:[
+{title:'Кортеж vs список',body:`<p style="margin-bottom:10px">Кортеж (<span class="bi">tuple</span>) похож на список, но <b>неизменяемый</b>. Используют скобки или просто запятые.</p>`,code:`t = (<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>)   <span class="cm"># или t = 1, 2, 3</span>\n<span class="fn">print</span>(t[<span class="nu">0</span>])      <span class="cm"># 1</span>\n<span class="fn">print</span>(<span class="fn">len</span>(t))     <span class="cm"># 3</span>\n<span class="cm"># t[0] = 5  →  TypeError!</span>`,output:`1\n3`},
+{title:'Индексация',body:`<p style="margin-bottom:10px">Индексация и срезы работают так же, как у списков.</p>`,code:`t = (<span class="nu">10</span>, <span class="nu">20</span>, <span class="nu">30</span>, <span class="nu">40</span>, <span class="nu">50</span>)\n<span class="fn">print</span>(t[<span class="nu">1</span>])      <span class="cm"># 20</span>\n<span class="fn">print</span>(t[-<span class="nu">1</span>])     <span class="cm"># 50</span>\n<span class="fn">print</span>(t[<span class="nu">1</span>:<span class="nu">3</span>])    <span class="cm"># (20, 30)</span>\n<span class="fn">print</span>(t[::-<span class="nu">1</span>])   <span class="cm"># (50, 40, 30, 20, 10)</span>`,output:`20\n50\n(20, 30)\n(50, 40, 30, 20, 10)`},
+{title:'Распаковка',body:`<p style="margin-bottom:10px">Кортеж можно распаковать в отдельные переменные. Звёздочка <span class="bi">*</span> собирает остаток.</p>`,code:`a, b, c = (<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>)\n<span class="fn">print</span>(a, b, c)        <span class="cm"># 1 2 3</span>\nfirst, *rest = (<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>, <span class="nu">4</span>, <span class="nu">5</span>)\n<span class="fn">print</span>(first)          <span class="cm"># 1</span>\n<span class="fn">print</span>(rest)           <span class="cm"># [2, 3, 4, 5]</span>`,output:`1 2 3\n1\n[2, 3, 4, 5]`}
+],
+quiz:[
+{q:'t=(1,2,3); t[1] → ?',opts:['1','2','3','ошибка'],ans:1,explain:'индексы у кортежей как у списков, начинаются с 0: t[1] — второй элемент (2)'},
+{q:'a,b=(10,20); a → ?',opts:['10','20','(10,20)','ошибка'],ans:0,explain:'при распаковке a получает первый элемент кортежа — 10'},
+{q:'Можно ли изменить элемент кортежа?',opts:['да','нет — TypeError','нет — ValueError','да, через метод'],ans:1,explain:'кортежи неизменяемы — любая попытка изменить элемент вызывает TypeError'},
+{q:'len((1,2,3,4)) → ?',opts:['3','4','5','ошибка'],ans:1,explain:'в кортеже четыре элемента, len возвращает 4'},
+{q:'(1,2)+(3,4) → ?',opts:['(1,2,3,4)','[1,2,3,4]','ошибка','(4,6)'],ans:0,explain:'сложение кортежей создаёт новый кортеж из всех элементов обоих'}
+],
+tasks:[
+{title:'Max и Min',desc:'Выведите max и min кортежа (каждое на новой строке)',starter:'t = (5, 2, 8, 1, 9)\n',expected:'9\n1',inputs:[]},
+{title:'Распаковка',desc:'Распакуйте (10,20,30) в три переменные и выведите их сумму',starter:'t = (10, 20, 30)\n',expected:'60',inputs:[]},
+{title:'Сумма первых',desc:'Выведите сумму первых элементов каждой пары в points',starter:'points = [(1, 2), (3, 4), (5, 6)]\n',expected:'9',inputs:[]},
+{title:'Именованные данные',desc:'<code>students=[("Аня",5),("Борис",3),("Вера",4)]</code>. Выведите только тех, у кого оценка ≥ 4, в формате <b>Имя: оценка</b>',starter:'students = [("Аня",5),("Борис",3),("Вера",4)]\n',expected:'Аня: 5\nВера: 4',inputs:[]},
+{title:'Zip двух списков',desc:'<code>names=["Аня","Борис","Вера"]</code>, <code>scores=[88,75,92]</code>. Создайте список кортежей через zip и выведите каждый',starter:'names = ["Аня", "Борис", "Вера"]\nscores = [88, 75, 92]\n',expected:"('Аня', 88)\n('Борис', 75)\n('Вера', 92)",inputs:[]},
+{title:'Координаты',desc:'<code>points=[(1,2),(4,6),(3,1)]</code>. Найдите точку, ближайшую к началу координат (0,0). Выведите её координаты',starter:'points = [(1,2),(4,6),(3,1)]\n',expected:'(3, 1)',inputs:[]},
+{title:'Сортировка кортежей',desc:'<code>data=[("Вера",4),("Аня",5),("Борис",3)]</code>. Отсортируйте по оценке по убыванию и выведите каждый кортеж',starter:'data = [("Вера",4),("Аня",5),("Борис",3)]\n',expected:"('Аня', 5)\n('Вера', 4)\n('Борис', 3)",inputs:[]}
+]},
+
+{id:'sets',num:11,emoji:'🌀',title:'Множества',subtitle:'Уникальность, объединение, пересечение',hue:155,
+theory:[
+{title:'Создание множества',body:`<p style="margin-bottom:10px">Множество (<span class="bi">set</span>) хранит только уникальные элементы. Порядок не гарантирован.</p>`,code:`s = {<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>, <span class="nu">2</span>, <span class="nu">1</span>}\n<span class="fn">print</span>(s)          <span class="cm"># {1, 2, 3}</span>\nlst = [<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">2</span>, <span class="nu">3</span>, <span class="nu">3</span>]\n<span class="fn">print</span>(<span class="fn">set</span>(lst))   <span class="cm"># {1, 2, 3}</span>`,output:`{1, 2, 3}\n{1, 2, 3}`},
+{title:'Операции с множествами',body:`<p style="margin-bottom:10px"><span class="bi">|</span> объединение, <span class="bi">&</span> пересечение, <span class="bi">-</span> разность, <span class="bi">^</span> симметричная разность.</p>`,code:`a = {<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>, <span class="nu">4</span>}\nb = {<span class="nu">3</span>, <span class="nu">4</span>, <span class="nu">5</span>, <span class="nu">6</span>}\n<span class="fn">print</span>(a | b)  <span class="cm"># {1,2,3,4,5,6}</span>\n<span class="fn">print</span>(a & b)  <span class="cm"># {3,4}</span>\n<span class="fn">print</span>(a - b)  <span class="cm"># {1,2}</span>\n<span class="fn">print</span>(a ^ b)  <span class="cm"># {1,2,5,6}</span>`,output:`{1, 2, 3, 4, 5, 6}\n{3, 4}\n{1, 2}\n{1, 2, 5, 6}`},
+{title:'Методы',body:`<p style="margin-bottom:10px"><span class="bi">add()</span> добавляет, <span class="bi">remove()</span>/<span class="bi">discard()</span> удаляют. <span class="bi">in</span> проверяет наличие.</p>`,code:`s = {<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>}\ns.add(<span class="nu">4</span>)        <span class="cm"># {1,2,3,4}</span>\ns.discard(<span class="nu">2</span>)    <span class="cm"># {1,3,4}</span>\n<span class="fn">print</span>(<span class="nu">3</span> <span class="kw">in</span> s)   <span class="cm"># True</span>\n<span class="fn">print</span>(<span class="fn">len</span>(s))   <span class="cm"># 3</span>`,output:`True\n3`}
+],
+quiz:[
+{q:'len({1,2,2,3,3}) → ?',opts:['5','3','2','4'],ans:1,explain:'множество хранит только уникальные элементы: {1,2,2,3,3} → {1,2,3}, три элемента'},
+{q:'{1,2,3}&{2,3,4} → ?',opts:['{1,2,3,4}','{2,3}','{1,4}','{1,2,3}'],ans:1,explain:'& — пересечение: только те элементы, которые есть в обоих множествах'},
+{q:'{1,2,3}|{3,4,5} → ?',opts:['{3}','{1,2,4,5}','{1,2,3,4,5}','{1,5}'],ans:2,explain:'| — объединение: все уникальные элементы из обоих множеств'},
+{q:'s={1,2}; s.add(2); len(s) → ?',opts:['1','2','3','ошибка'],ans:1,explain:'2 уже есть в множестве, дубликаты не добавляются — размер остаётся 2'},
+{q:'5 in {1,3,5,7} → ?',opts:['False','True','None','ошибка'],ans:1,explain:'оператор in проверяет наличие элемента: 5 есть в множестве → True'}
+],
+tasks:[
+{title:'Уникальные элементы',desc:'Выведите количество уникальных элементов в lst',starter:'lst = [1, 2, 2, 3, 3, 4]\n',expected:'4',inputs:[]},
+{title:'Пересечение',desc:'Найдите и выведите общие элементы через sorted()',starter:'a = {1, 2, 3, 4, 5}\nb = {3, 4, 5, 6, 7}\n',expected:'[3, 4, 5]',inputs:[]},
+{title:'Уникальные слова',desc:'Выведите отсортированный список уникальных слов',starter:'words = ["кот", "пёс", "кот", "рыба", "пёс"]\n',expected:"['кот', 'пёс', 'рыба']",inputs:[]},
+{title:'Разность множеств',desc:'<code>class1={"Аня","Борис","Вера","Гриша"}</code>, <code>class2={"Вера","Гриша","Дима","Елена"}</code>. Выведите отсортированный список тех, кто есть только в первом классе',starter:'class1 = {"Аня","Борис","Вера","Гриша"}\nclass2 = {"Вера","Гриша","Дима","Елена"}\n',expected:"['Аня', 'Борис']",inputs:[]},
+{title:'Все уникальные символы',desc:'<code>s="programming"</code>. Выведите отсортированный список всех уникальных символов',starter:'s = "programming"\n',expected:"['a', 'g', 'i', 'm', 'n', 'o', 'p', 'r']",inputs:[]},
+{title:'Частые слова',desc:'<code>text="кот пёс кот рыба пёс кот"</code>. Используйте множество, чтобы найти все уникальные слова. Выведите отсортированно.',starter:'text = "кот пёс кот рыба пёс кот"\n',expected:"['кот', 'пёс', 'рыба']",inputs:[]},
+{title:'Симметричная разность',desc:'<code>a={1,2,3,4,5}</code>, <code>b={3,4,5,6,7}</code>. Выведите отсортированный список элементов, которые есть только в одном множестве (не в обоих)',starter:'a = {1,2,3,4,5}\nb = {3,4,5,6,7}\n',expected:'[1, 2, 6, 7]',inputs:[]}
+]}
+,
+{id:'practice',num:12,emoji:'🏋️',title:'Практика',subtitle:'Разноуровневые задачи на всё изученное',hue:50,type:'practice',theory:[],quiz:[],tasks:[
+  {title:'Чётные в квадрате',desc:'<code>lst=[1,2,3,4,5,6,7,8]</code>. Выведите список квадратов чётных чисел',starter:'lst = [1,2,3,4,5,6,7,8]\n',expected:'[4, 16, 36, 64]',inputs:[]},
+  {title:'Пирамида чисел',desc:'Выведите пирамиду чисел (5 строк): строка 1 → "1", строка 2 → "1 2", ...',starter:'',expected:'1\n1 2\n1 2 3\n1 2 3 4\n1 2 3 4 5',inputs:[]},
+  {title:'Словарь из двух списков',desc:'<code>keys=["a","b","c"]</code>, <code>vals=[1,2,3]</code>. Создайте словарь через zip и выведите его',starter:'keys = ["a","b","c"]\nvals = [1,2,3]\n',expected:"{'a': 1, 'b': 2, 'c': 3}",inputs:[]},
+  {title:'Самое длинное слово',desc:'<code>s="the quick brown fox jumps"</code>. Найдите и выведите самое длинное слово',starter:'s = "the quick brown fox jumps"\n',expected:'jumps',inputs:[]},
+  {title:'Числа-палиндромы',desc:'Выведите все числа от 1 до 200, которые являются палиндромами (читаются одинаково в обе стороны)',starter:'',expected:'[1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33, 44, 55, 66, 77, 88, 99, 101, 111, 121, 131, 141, 151, 161, 171, 181, 191]',inputs:[]},
+  {title:'Статистика списка',desc:'<code>data=[4,7,2,9,1,5,8,3,6,10]</code>. Выведите: минимум, максимум, среднее (с 1 знаком), сумму',starter:'data = [4,7,2,9,1,5,8,3,6,10]\n',expected:'Мин: 1\nМакс: 10\nСреднее: 5.5\nСумма: 55',inputs:[]},
+  {title:'Шифр Цезаря',desc:'<code>text="hello"</code>, <code>shift=3</code>. Сдвинь каждую букву на 3 позиции вперёд (только строчные латинские)',starter:'text = "hello"\nshift = 3\n',expected:'khoor',inputs:[]},
+  {title:'Счётчик слов',desc:'<code>text="to be or not to be that is the question"</code>. Выведите все уникальные слова и их частоту, отсортированно по алфавиту',starter:'text = "to be or not to be that is the question"\n',expected:'be: 2\nis: 1\nnot: 1\nor: 1\nquestion: 1\nthat: 1\nthe: 1\nto: 2',inputs:[]},
+  {title:'Числа Фибоначчи до N',desc:'Выведите все числа Фибоначчи, не превышающие 100, в одну строку через пробел',starter:'',expected:'0 1 1 2 3 5 8 13 21 34 55 89',inputs:[]},
+  {title:'Матрица: главная диагональ',desc:'<code>m=[[1,2,3],[4,5,6],[7,8,9]]</code>. Выведите сумму элементов главной диагонали',starter:'m = [[1,2,3],[4,5,6],[7,8,9]]\n',expected:'15',inputs:[]},
+  {title:'Валидация пароля',desc:'Функция <code>check_password(pwd)</code>: минимум 8 символов, есть цифра, есть заглавная буква. Выведите для <code>"abc123"</code>, <code>"Abc12345"</code>, <code>"abcdefgh"</code>',starter:'print(check_password("abc123"))\nprint(check_password("Abc12345"))\nprint(check_password("abcdefgh"))\n',expected:'False\nTrue\nFalse',inputs:[]},
+  {title:'Дубликаты',desc:'<code>lst=[1,2,3,2,4,3,5,1]</code>. Найдите и выведите отсортированный список элементов, встречающихся больше одного раза',starter:'lst = [1,2,3,2,4,3,5,1]\n',expected:'[1, 2, 3]',inputs:[]},
+  {title:'Генератор паролей',desc:'Выведите все возможные двухсимвольные пароли из <code>abc</code> (каждый на новой строке, в алфавитном порядке)',starter:'chars = "abc"\n',expected:'aa\nab\nac\nba\nbb\nbc\nca\ncb\ncc',inputs:[]},
+  {title:'Разворот слов в предложении',desc:'<code>s="Python это круто"</code>. Разверните порядок слов (не буквы!)',starter:'s = "Python это круто"\n',expected:'круто это Python',inputs:[]},
+  {title:'Банковский счёт',desc:'Начальный баланс 1000. Список операций: <code>[200,-50,300,-1500,100]</code>. Выводи баланс после каждой, при недостатке средств выводи <b>Недостаточно средств</b>',starter:'balance = 1000\nops = [200, -50, 300, -1500, 100]\n',expected:'1200\n1150\n1450\nНедостаточно средств\n1550',inputs:[]},
+  {title:'Простые делители',desc:'<code>n=360</code>. Выведите все простые делители числа (без повторений, отсортированно)',starter:'n = 360\n',expected:'[2, 3, 5]',inputs:[]},
+  {title:'Транспонирование матрицы',desc:'<code>m=[[1,2,3],[4,5,6]]</code>. Выведите транспонированную матрицу (строки и столбцы поменяйте местами)',starter:'m = [[1,2,3],[4,5,6]]\n',expected:'[1, 4]\n[2, 5]\n[3, 6]',inputs:[]},
+  {title:'Медиана',desc:'<code>data=[3,1,4,1,5,9,2,6,5,3]</code>. Найдите медиану (средний элемент отсортированного списка). Если чётное кол-во — среднее двух средних',starter:'data = [3,1,4,1,5,9,2,6,5,3]\n',expected:'3.5',inputs:[]},
+  {title:'Бинарный поиск',desc:'Реализуйте бинарный поиск в отсортированном списке. <code>lst=[1,3,5,7,9,11,13,15]</code>, найди <code>7</code>. Выведите индекс (начинается с 0).',starter:'lst = [1,3,5,7,9,11,13,15]\ntarget = 7\n',expected:'3',inputs:[]},
+  {title:'Самая длинная серия',desc:'<code>lst=[1,1,2,2,2,3,1,1,1,1]</code>. Найдите самый часто идущий подряд элемент и длину его серии. Выведите: <b>элемент: длина</b>',starter:'lst = [1,1,2,2,2,3,1,1,1,1]\n',expected:'1: 4',inputs:[]}
+]}
+];
+
+// ============================
+// PROGRESS
+// ============================
+const STORAGE_KEY = 'sasha_summer_2026';
+
+function getProgress(){
+  try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{xp:0,topics:{}};}
+  catch{return{xp:0,topics:{}};}
+}
+function saveProgress(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p));}
+function getTopicProgress(id){const p=getProgress();return p.topics[id]||{quizAnswers:{},tasksPassed:{},taskCode:{},medal:false};}
+function saveTopicProgress(id,tp){const p=getProgress();p.topics[id]=tp;saveProgress(p);}
+function saveTaskCode(topicId,ti,code){const tp=getTopicProgress(topicId);if(!tp.taskCode)tp.taskCode={};tp.taskCode[ti]=code;saveTopicProgress(topicId,tp);}
+function loadTaskCode(topicId,ti,fallback){const tp=getTopicProgress(topicId);return(tp.taskCode&&tp.taskCode[ti])||fallback;}
+function countQuizCorrect(topicId){
+  const tp=getTopicProgress(topicId);
+  const t=TOPICS.find(t=>t.id===topicId);
+  let c=0;
+  t.quiz.forEach((q,i)=>{if(tp.quizAnswers[i]===q.ans)c++;});
+  return c;
+}
+function countTasksPassed(topicId){
+  const tp=getTopicProgress(topicId);
+  return Object.values(tp.tasksPassed).filter(Boolean).length;
+}
+function addXP(amount, sourceEl){
+  const p=getProgress();
+  p.xp+=amount;
+  saveProgress(p);
+  updateHUD();
+  if(sourceEl){
+    const el=document.createElement('div');
+    el.className='xp-float';
+    el.textContent=`+${amount} XP`;
+    const rect=sourceEl.getBoundingClientRect();
+    el.style.left=rect.left+'px';
+    el.style.top=rect.top+'px';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),900);
+  }
+}
+function getLevelInfo(xp){
+  let l=LEVELS[0];
+  for(let i=LEVELS.length-1;i>=0;i--){if(xp>=LEVELS[i].xp){l=LEVELS[i];break;}}
+  return l;
+}
+function getLevelPercent(xp){
+  let idx=0;
+  for(let i=LEVELS.length-1;i>=0;i--){if(xp>=LEVELS[i].xp){idx=i;break;}}
+  if(idx>=LEVELS.length-1)return 100;
+  const cur=LEVELS[idx].xp;
+  const nxt=LEVELS[idx+1].xp;
+  return Math.round(((xp-cur)/(nxt-cur))*100);
+}
+function countMedals(){
+  const p=getProgress();
+  return Object.values(p.topics).filter(t=>t.medal).length;
+}
+function updateHUD(){
+  const p=getProgress();
+  const lvl=getLevelInfo(p.xp);
+  const pct=getLevelPercent(p.xp);
+  const medals=countMedals();
+  ['hud','topicHud'].forEach(prefix=>{
+    const lv=document.getElementById(prefix+'Level');
+    const xb=document.getElementById(prefix+'XpBar');
+    const xl=document.getElementById(prefix+'XpLabel');
+    const md=document.getElementById(prefix+'Medals');
+    if(lv)lv.textContent=lvl.label;
+    if(xb)xb.style.width=pct+'%';
+    if(xl)xl.textContent=p.xp+' XP';
+    if(md)md.textContent=medals;
+  });
+  const sx=document.getElementById('statXP');
+  const st=document.getElementById('statTopics');
+  const sm=document.getElementById('statMedals');
+  if(sx)sx.textContent=p.xp;
+  if(sm)sm.textContent=medals;
+  if(st){
+    const completed=TOPICS.filter(t=>{
+      const tOk=countTasksPassed(t.id)===t.tasks.length;
+      const qOk=t.type==='practice'?true:countQuizCorrect(t.id)===t.quiz.length;
+      return tOk&&qOk;
+    }).length;
+    st.textContent=completed;
+  }
+}
+
+// ============================
+// PYODIDE
+// ============================
+let _pyodideInstance=null;
+let _pyodidePromise=null;
+let _pyodideReady=false;
+
+async function getPy(){
+  if(_pyodideInstance)return _pyodideInstance;
+  if(!_pyodidePromise){_pyodidePromise=loadPyodide({indexURL:'https://cdn.jsdelivr.net/npm/pyodide@0.25.1/'});}
+  _pyodideInstance=await _pyodidePromise;
+  return _pyodideInstance;
+}
+
+async function runStudentCode(code,inputs=[]){
+  const py=await getPy();
+  const setup=`import sys\nfrom io import StringIO\n_cap=StringIO()\nsys.stdout=_cap\n`;
+  let inputSetup='';
+  if(inputs.length>0){
+    inputSetup=`import builtins\n_inp=iter(${JSON.stringify(inputs)})\nbuiltins.input=lambda *a:next(_inp)\n`;
+  }
+  try{
+    py.runPython(setup+inputSetup);
+    py.runPython(code);
+    py.runPython('sys.stdout=sys.__stdout__\n_out=_cap.getvalue()');
+    const output=py.globals.get('_out').trim();
+    return{ok:true,output};
+  }catch(e){
+    try{py.runPython('sys.stdout=sys.__stdout__');}catch{}
+    const msg=e.message||String(e);
+    const lines=msg.split('\n');
+    const last=lines.filter(l=>l.trim()).pop()||msg;
+    return{ok:false,error:last};
+  }
+}
+
+// ============================
+// NAVIGATION
+// ============================
+let currentTopic=null;
+let currentTab='theory';
+let editors={};
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function goHome(){
+  showScreen('homeScreen');
+  renderTopicGrid();
+  updateHUD();
+}
+
+function openTopic(topicId){
+  currentTopic=TOPICS.find(t=>t.id===topicId);
+  if(!currentTopic)return;
+  editors={};
+  showScreen('topicScreen');
+  document.getElementById('topicHudTitle').textContent=currentTopic.emoji+' '+currentTopic.title;
+  renderTopicHeader();
+  // Show/hide theory+quiz tabs based on topic type
+  const isPractice = currentTopic.type === 'practice';
+  document.getElementById('tabTheory').style.display = isPractice ? 'none' : '';
+  document.getElementById('tabQuiz').style.display = isPractice ? 'none' : '';
+  if (isPractice) switchTab('tasks'); else switchTab('theory');
+  updateHUD();
+}
+
+function switchTab(tab){
+  currentTab=tab;
+  ['theory','quiz','tasks'].forEach(t=>{
+    document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1)).classList.toggle('active',t===tab);
+  });
+  const content=document.getElementById('tabContent');
+  content.innerHTML='';
+  if(tab==='theory')renderTheory(content);
+  else if(tab==='quiz')renderQuiz(content);
+  else if(tab==='tasks')renderTasks(content);
+}
+
+// ============================
+// HOME
+// ============================
+function renderTopicGrid(){
+  const grid=document.getElementById('topicGrid');
+  grid.innerHTML='';
+  TOPICS.forEach(t=>{
+    const isPractice = t.type === 'practice';
+    const qCorrect=isPractice?0:countQuizCorrect(t.id);
+    const tPassed=countTasksPassed(t.id);
+    const tp=getTopicProgress(t.id);
+    const completed=isPractice?(tPassed===t.tasks.length):(qCorrect===t.quiz.length&&tPassed===t.tasks.length);
+    const color=`hsl(${t.hue},70%,60%)`;
+    const card=document.createElement('div');
+    card.className='topic-card'+(completed?' completed':'');
+    card.style.borderTopColor=color;
+    card.style.setProperty('--glow-color',color);
+    if(!completed){
+      card.onmouseenter=()=>{card.style.boxShadow=`0 8px 32px hsl(${t.hue},70%,40%,0.25)`;};
+      card.onmouseleave=()=>{card.style.boxShadow='';};
+    }
+    card.onclick=()=>openTopic(t.id);
+    const stars=Array(t.tasks.length).fill(0).map((_,i)=>
+      `<span class="${i<tPassed?'filled':''}">${i<tPassed?'★':'☆'}</span>`
+    ).join('');
+    const quizFrac=qCorrect+'/'+t.quiz.length;
+    const medal=tp.medal?`<span title="Медаль получена!" style="font-size:20px">🏅</span>`:`<span style="font-size:20px;opacity:.25">🏅</span>`;
+    card.innerHTML=`
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px">
+        <div>
+          <div style="font-size:28px;margin-bottom:4px">${t.emoji}</div>
+          <div style="font-size:11px;color:hsl(${t.hue},70%,60%);font-weight:700;letter-spacing:.5px;text-transform:uppercase">Тема ${t.num}</div>
+          <div style="font-size:17px;font-weight:700;margin-top:2px">${t.title}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">${t.subtitle}</div>
+        </div>
+        ${medal}
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
+        <div>
+          ${isPractice
+            ? `<div style="font-size:14px;color:hsl(${t.hue},70%,60%);font-weight:600">💪 ${t.tasks.length} задач разного уровня</div><div style="font-size:12px;color:var(--muted);margin-top:4px">Решено: ${tPassed}/${t.tasks.length}</div>`
+            : `<div class="stars" style="font-size:16px;letter-spacing:2px">${stars} <span style="font-size:11px;color:var(--muted)">${tPassed}/${t.tasks.length} задачи</span></div><div style="font-size:12px;color:var(--muted);margin-top:4px">Тест: ${qCorrect===t.quiz.length?'<span style="color:#4ade80">✓ '+quizFrac+'</span>':'<span>'+quizFrac+'</span>'}</div>`
+          }
+        </div>
+        ${completed?'<span style="background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;color:#4ade80">✓ Пройдено</span>':''}
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+// ============================
+// TOPIC HEADER
+// ============================
+function renderTopicHeader(){
+  const t=currentTopic;
+  const color=`hsl(${t.hue},70%,60%)`;
+  document.getElementById('topicHeader').innerHTML=`
+    <div style="display:flex;align-items:center;gap:16px">
+      <div style="font-size:48px">${t.emoji}</div>
+      <div>
+        <div style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:${color}">Тема ${t.num}</div>
+        <h2 style="font-size:26px;font-weight:800;color:${color}">${t.title}</h2>
+        <p style="color:var(--muted);font-size:14px">${t.subtitle}</p>
+      </div>
+    </div>
+    <div style="height:3px;background:linear-gradient(90deg,${color},transparent);border-radius:3px;margin-top:16px"></div>`;
+}
+
+// ============================
+// THEORY
+// ============================
+function renderTheory(container){
+  const t=currentTopic;
+  t.theory.forEach((card,i)=>{
+    const div=document.createElement('div');
+    div.className='theory-card';
+    div.style.animationDelay=(i*0.07)+'s';
+    div.style.marginBottom='16px';
+    div.innerHTML=`
+      <h3 style="font-size:17px;font-weight:700;margin-bottom:12px;color:hsl(${t.hue},70%,65%)">${card.title}</h3>
+      ${card.body}
+      <div class="code-block"><pre>${card.code}</pre></div>
+      ${card.output?`<div class="code-output"><span style="color:var(--muted);font-size:11px">Вывод:</span>\n${escHtml(card.output)}</div>`:''}`;
+    container.appendChild(div);
+  });
+}
+
+// ============================
+// QUIZ
+// ============================
+function resetQuiz(topicId){
+  const tp=getTopicProgress(topicId);
+  tp.quizAnswers={};
+  // сбрасываем медаль если тест был последним шагом
+  tp.medal=false;
+  saveTopicProgress(topicId,tp);
+  updateHUD();
+  switchTab('quiz');
+}
+
+function renderQuiz(container){
+  const t=currentTopic;
+  const tp=getTopicProgress(t.id);
+  const correct=countQuizCorrect(t.id);
+  const allAnswered=Object.keys(tp.quizAnswers).length===t.quiz.length;
+
+  const scoreDiv=document.createElement('div');
+  scoreDiv.style.cssText='background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px';
+  scoreDiv.id='quizScore';
+  const retakeBtn=allAnswered?`<button class="btn btn-retake" onclick="resetQuiz('${t.id}')">🔄 Пройти заново</button>`:'';
+  scoreDiv.innerHTML=`<span style="font-weight:700;font-size:15px">Результат теста</span><div style="display:flex;align-items:center;gap:12px"><span style="font-size:18px;font-weight:800;color:${correct===t.quiz.length?'#4ade80':'#a78bfa'}">${correct}/${t.quiz.length} правильно</span>${retakeBtn}</div>`;
+  container.appendChild(scoreDiv);
+
+  t.quiz.forEach((q,qi)=>{
+    const answered=tp.quizAnswers[qi]!==undefined;
+    const userAns=tp.quizAnswers[qi];
+    const div=document.createElement('div');
+    div.id='quiz-item-'+qi;
+    div.style.cssText='background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px';
+    div.innerHTML=`<div style="font-weight:600;font-size:15px;margin-bottom:14px;line-height:1.5">${qi+1}. ${escHtml(q.q)}</div>`;
+    q.opts.forEach((opt,oi)=>{
+      const btn=document.createElement('button');
+      btn.className='quiz-option';
+      btn.textContent=opt;
+      if(answered){
+        btn.disabled=true;
+        if(oi===q.ans)btn.classList.add('correct');
+        else if(oi===userAns)btn.classList.add('wrong');
+      }
+      btn.onclick=()=>handleQuizAnswer(qi,oi,btn,div);
+      div.appendChild(btn);
+    });
+    if(answered && q.explain){
+      const ex=document.createElement('div');
+      ex.className='quiz-explain'+(userAns===q.ans?' correct-ex':'');
+      ex.textContent=(userAns===q.ans?'✓ ':'💡 ')+q.explain;
+      div.appendChild(ex);
+    }
+    container.appendChild(div);
+  });
+}
+
+function handleQuizAnswer(qi,oi,btn,container){
+  const t=currentTopic;
+  const tp=getTopicProgress(t.id);
+  if(tp.quizAnswers[qi]!==undefined)return;
+  tp.quizAnswers[qi]=oi;
+  const isCorrect=oi===t.quiz[qi].ans;
+  container.querySelectorAll('.quiz-option').forEach((b,bi)=>{
+    b.disabled=true;
+    if(bi===t.quiz[qi].ans)b.classList.add('correct');
+    else if(bi===oi&&!isCorrect)b.classList.add('wrong');
+  });
+  if(!isCorrect)btn.classList.add('shake');
+  // Показываем объяснение
+  const q=t.quiz[qi];
+  if(q.explain){
+    const ex=document.createElement('div');
+    ex.className='quiz-explain'+(isCorrect?' correct-ex':'');
+    ex.textContent=(isCorrect?'✓ ':'💡 ')+q.explain;
+    container.appendChild(ex);
+  }
+  saveTopicProgress(t.id,tp);
+  if(isCorrect) addXP(5,btn);
+  // Обновляем панель счёта
+  const scoreEl=document.getElementById('quizScore');
+  if(scoreEl){
+    const c=countQuizCorrect(t.id);
+    const allDone=Object.keys(tp.quizAnswers).length===t.quiz.length;
+    const retakeBtn=allDone?`<button class="btn btn-retake" onclick="resetQuiz('${t.id}')">🔄 Пройти заново</button>`:'';
+    scoreEl.querySelector('div').innerHTML=`<span style="font-size:18px;font-weight:800;color:${c===t.quiz.length?'#4ade80':'#a78bfa'}">${c}/${t.quiz.length} правильно</span>${retakeBtn}`;
+  }
+  checkTopicComplete();
+}
+
+// ============================
+// TASKS
+// ============================
+function renderTasks(container){
+  const t=currentTopic;
+  const tp=getTopicProgress(t.id);
+  t.tasks.forEach((task,ti)=>{
+    const passed=!!tp.tasksPassed[ti];
+    const div=document.createElement('div');
+    div.style.cssText='background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;'+(passed?'border-color:rgba(34,197,94,.3)':'');
+    div.innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-size:13px;font-weight:700;color:hsl(${t.hue},70%,60%)">Задача ${ti+1}</span>
+        <span style="font-weight:700;font-size:16px">${escHtml(task.title)}</span>
+        ${passed?'<span class="task-passed-badge">✓ Решено</span>':''}
+      </div>
+      <p style="color:#475569;font-size:14px;line-height:1.6;margin-bottom:12px">${task.desc}</p>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;">
+        ${task.inputs.length>0?`<div style="flex:1;min-width:140px;background:#f0f6ff;border:1px solid #c7d7f5;border-radius:8px;padding:8px 12px;font-size:13px;"><span style="color:#6b748f;font-weight:600;display:block;margin-bottom:4px;">Входные данные</span><code style="color:#4f46e5;font-family:'Fira Code',monospace;">${escHtml(task.inputs.join('\\n'))}</code></div>`:''}
+        <div style="flex:2;min-width:180px;background:#f0fff4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 12px;font-size:13px;"><span style="color:#6b748f;font-weight:600;display:block;margin-bottom:4px;">Ожидаемый вывод</span><pre style="margin:0;color:#15803d;font-family:'Fira Code',monospace;font-size:12px;white-space:pre-wrap;">${escHtml(task.expected)}</pre></div>
+      </div>
+      <div id="editor-wrap-${ti}"></div>
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn btn-run" id="runBtn-${ti}" onclick="runTask(${ti})">▶ Запустить</button>
+        <button class="btn btn-check" id="checkBtn-${ti}" onclick="checkTask(${ti})">✓ Проверить</button>
+      </div>
+      <div class="output-area" id="output-${ti}" style="display:none"></div>
+      <div id="result-${ti}"></div>`;
+    container.appendChild(div);
+    // Init CodeMirror
+    requestAnimationFrame(()=>{
+      const wrap=document.getElementById('editor-wrap-'+ti);
+      if(!wrap)return;
+      const savedCode=loadTaskCode(t.id,ti,task.starter);
+      const cm=CodeMirror(wrap,{
+        value:savedCode,
+        mode:'python',
+        theme:'default',
+        lineNumbers:true,
+        indentUnit:4,
+        tabSize:4,
+        indentWithTabs:false,
+        extraKeys:{"Tab":cm=>cm.execCommand("indentMore")}
+      });
+      editors[ti]=cm;
+    });
+  });
+}
+
+async function runTask(ti){
+  const task=currentTopic.tasks[ti];
+  const btn=document.getElementById('runBtn-'+ti);
+  const outEl=document.getElementById('output-'+ti);
+  if(!_pyodideReady){outEl.style.display='block';outEl.className='output-area';outEl.textContent='⏳ Подождите, Python загружается...';return;}
+  const code=editors[ti]?editors[ti].getValue():task.starter;
+  if(editors[ti])saveTaskCode(currentTopic.id,ti,code);
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Запуск...';
+  const res=await runStudentCode(code,task.inputs);
+  btn.disabled=false;btn.innerHTML='▶ Запустить';
+  outEl.style.display='block';
+  if(res.ok){
+    outEl.className='output-area';
+    outEl.textContent=res.output||'(нет вывода)';
+  }else{
+    outEl.className='output-area error';
+    outEl.textContent='⚠ '+res.error;
+  }
+}
+
+async function checkTask(ti){
+  const task=currentTopic.tasks[ti];
+  const t=currentTopic;
+  const btn=document.getElementById('checkBtn-'+ti);
+  const outEl=document.getElementById('output-'+ti);
+  const resEl=document.getElementById('result-'+ti);
+  if(!_pyodideReady){outEl.style.display='block';outEl.className='output-area';outEl.textContent='⏳ Подождите, Python загружается...';return;}
+  const code=editors[ti]?editors[ti].getValue():task.starter;
+  if(editors[ti])saveTaskCode(t.id,ti,code);
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Проверка...';
+  const res=await runStudentCode(code,task.inputs);
+  btn.disabled=false;btn.innerHTML='✓ Проверить';
+  outEl.style.display='block';
+  if(res.ok){
+    outEl.className='output-area';
+    outEl.textContent=res.output||'(нет вывода)';
+    const ok=res.output===task.expected;
+    if(ok){
+      resEl.innerHTML=`<div class="task-result-ok">✅ Верно! +15 XP</div>`;
+      const tp=getTopicProgress(t.id);
+      if(!tp.tasksPassed[ti]){
+        tp.tasksPassed[ti]=true;
+        saveTopicProgress(t.id,tp);
+        addXP(15,btn);
+        // Update border
+        btn.closest('[style*="border:"]').style.borderColor='rgba(34,197,94,.3)';
+        // Update badge
+        const titleRow=btn.closest('div').parentElement.querySelector('[style*="align-items:center"]');
+        if(titleRow&&!titleRow.querySelector('.task-passed-badge')){
+          const badge=document.createElement('span');
+          badge.className='task-passed-badge';
+          badge.textContent='✓ Решено';
+          titleRow.appendChild(badge);
+        }
+        checkTopicComplete();
+      }
+    }else{
+      resEl.innerHTML=`<div class="task-result-err">❌ Неверно. Ожидалось:<br><code style="font-family:'Fira Code',monospace;color:#f1fa8c">${escHtml(task.expected)}</code></div>`;
+    }
+  }else{
+    outEl.className='output-area error';
+    outEl.textContent='⚠ '+res.error;
+    resEl.innerHTML=`<div class="task-result-err">❌ Ошибка в коде. Исправьте и попробуйте снова!</div>`;
+  }
+}
+
+// ============================
+// MEDAL
+// ============================
+function checkTopicComplete(){
+  const t=currentTopic;
+  if(!t)return;
+  const tp=getTopicProgress(t.id);
+  if(tp.medal)return;
+  const isPractice=t.type==='practice';
+  const qOk=isPractice?true:countQuizCorrect(t.id)===t.quiz.length;
+  const tOk=countTasksPassed(t.id)===t.tasks.length;
+  if(qOk&&tOk){
+    tp.medal=true;
+    saveTopicProgress(t.id,tp);
+    const p=getProgress();
+    p.xp+=25;
+    saveProgress(p);
+    updateHUD();
+    showMedal(25);
+  }
+}
+function showMedal(bonus){
+  document.getElementById('medalXP').textContent=`🎉 +${bonus} бонусных XP!`;
+  document.getElementById('medalOverlay').style.display='flex';
+}
+function closeMedal(){
+  document.getElementById('medalOverlay').style.display='none';
+  updateHUD();
+  renderTopicHeader();
+}
+
+// ============================
+// UTILS
+// ============================
+function escHtml(s){
+  if(!s)return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ============================
+// INIT
+// ============================
+async function init(){
+  // Load Pyodide
+  try{
+    await getPy();
+    _pyodideReady=true;
+    const st=document.getElementById('pyStatus');
+    const sp=document.getElementById('pySpinner');
+    const tx=document.getElementById('pyStatusText');
+    sp.style.display='none';
+    tx.textContent='🐍 Python готов';
+    st.style.background='rgba(34,197,94,.1)';
+    st.style.borderColor='rgba(34,197,94,.3)';
+    st.style.color='#4ade80';
+    setTimeout(()=>{st.style.opacity='0';setTimeout(()=>{st.style.display='none';},500);},2000);
+  }catch(e){
+    const tx=document.getElementById('pyStatusText');
+    tx.textContent='⚠ Ошибка загрузки Python';
+    console.error(e);
+  }
+}
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
